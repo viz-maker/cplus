@@ -213,28 +213,25 @@ src/
 
 ## Design system
 
-> **Estado: migração pendente.** A camada de apresentação atual é própria deste
-> repositório. A biblioteca oficial (`@constructpluseu/react`, documentada em
-> <https://constructplus.eu/DS/>) passa a ser a fonte dos componentes — ver
-> [docs/migracao-design-system.md](docs/migracao-design-system.md) para o
-> mapeamento componente a componente e o que fica à mão.
+A interface usa **`@constructpluseu/react`**
+([documentação](https://constructplus.eu/DS/)). Componentes, tokens, tipografia
+e ambos os temas vêm de lá.
 
-Enquanto a migração não acontece: cores, tipografia, espaçamento, cantos e
-elevação em [tokens.css](src/styles/tokens.css); classes de componente em
-[global.css](src/styles/global.css). Estilos `inline` só para valores dinâmicos.
+- Tema claro/escuro por `data-theme` no `<html>`, aplicado antes da primeira
+  pintura e alternável no cabeçalho.
+- [global.css](src/styles/global.css) contém **apenas** layout e as superfícies
+  que o design system não cobre (calendário da agenda, editor de orçamento,
+  campo rich-text), escritas sobre tokens do DS.
+- **Não declarar tokens `--cp-*` em CSS local.** O design system usa o mesmo
+  prefixo; redefinir um sobrepõe-se-lhe silenciosamente.
 
-Duas divergências deliberadas face às fontes de design:
+O detalhe do que migrou, o que ficou à mão e a dívida conhecida está em
+[docs/migracao-design-system.md](docs/migracao-design-system.md).
 
-- **Raio dos cantos.** O brief escrito especifica 16px em controlos e 12px em
-  superfícies; o `Construct+.dc.html` importado usa 5px em tudo. Segue-se o
-  ficheiro `.dc.html`, com o valor isolado em `--cp-radius` /
-  `--cp-radius-surface` — alinhar com o brief é uma alteração de duas linhas.
-- **Ano nas referências de orçamento.** O protótipo gerava sempre
-  `ORC-2026-…`; aqui usa-se o ano corrente.
-
-Acrescentado sobre o protótipo: navegação por teclado (`Escape` fecha modais),
-bloqueio de scroll por trás de sobreposições, `aria-*` em diálogos, comutadores
-e campos inválidos, estados de carregamento e erro, e `prefers-reduced-motion`.
+Divergência deliberada face ao protótipo: o ano nas referências de orçamento
+usa o ano corrente, em vez do `ORC-2026-…` fixo. *(A antiga divergência sobre o
+raio dos cantos deixou de existir — o design system usa 5px, tal como o
+`.dc.html` importado.)*
 
 ---
 

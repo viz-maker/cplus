@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from 'react';
+import { Button, InlineNotification, TextInput } from '@constructpluseu/react';
 import { Brand } from '../components/Brand';
 import { BRAND_BREAKPOINT, useViewportWidth } from '../hooks/useViewport';
 
@@ -35,202 +36,75 @@ export function LoginScreen({ demoEmail, onSuccess, onRecover, onError }: LoginS
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', background: 'var(--cp-navy)' }}>
+    <div className="cp-login">
       {showBrandPanel && (
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            padding: 64,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            background: 'var(--cp-navy)',
-          }}
-        >
+        <aside className="cp-login__brand">
           <Brand tone="onDark" />
-          <div style={{ maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <h1
-              style={{
-                fontSize: 36,
-                lineHeight: 1.15,
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                color: '#fff',
-              }}
-            >
-              Gestão de obra, do orçamento à faturação.
-            </h1>
-            <p style={{ fontSize: 16, lineHeight: 1.5, color: 'var(--cp-text-faint)' }}>
+          <div className="cp-login__pitch">
+            <h1>Gestão de obra, do orçamento à faturação.</h1>
+            <p>
               Agenda, aprovisionamento e orçamentos numa única plataforma para equipas de
               construção e reabilitação.
             </p>
           </div>
-          <p style={{ fontSize: 12, color: 'var(--cp-text-muted)' }}>
-            Construct Plus, Lda · Aveiro, Portugal
-          </p>
-        </div>
+          <p className="cp-login__legal">Construct Plus, Lda · Aveiro, Portugal</p>
+        </aside>
       )}
 
-      <div
-        style={{
-          width: '100%',
-          maxWidth: showBrandPanel ? 560 : undefined,
-          flex: showBrandPanel ? undefined : 1,
-          background: 'var(--cp-canvas)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 24,
-        }}
-      >
-        <form
-          onSubmit={submit}
-          className="cp-anim-fade-up"
-          style={{
-            width: '100%',
-            maxWidth: 400,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 24,
-          }}
-        >
+      <div className="cp-login__panel">
+        <form onSubmit={submit} className="cp-login__form">
           <Brand tone="onLight" />
 
           <div>
-            <h2
-              style={{
-                fontSize: 24,
-                lineHeight: 1.2,
-                fontWeight: 700,
-                color: 'var(--cp-navy)',
-                marginBottom: 6,
-              }}
-            >
-              Entrar na conta
-            </h2>
-            <p style={{ fontSize: 14, lineHeight: 1.5, color: 'var(--cp-text-muted)' }}>
-              Introduza as credenciais da sua organização.
-            </p>
+            <h2 className="cp-heading-md">Entrar na conta</h2>
+            <p className="cp-body cp-muted">Introduza as credenciais da sua organização.</p>
           </div>
 
           {error && (
-            <div
-              role="alert"
-              className="cp-anim-fade-in"
-              style={{
-                display: 'flex',
-                gap: 10,
-                alignItems: 'flex-start',
-                padding: '12px 14px',
-                borderRadius: 'var(--cp-radius)',
-                background: 'var(--cp-danger-bg)',
-                border: '1px solid var(--cp-danger-border)',
-              }}
-            >
-              <span
-                aria-hidden
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: 'var(--cp-danger)',
-                  marginTop: 6,
-                  flex: 'none',
-                }}
-              />
-              <div>
-                <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--cp-danger)' }}>{error}</p>
-                <p
-                  style={{
-                    fontSize: 12,
-                    lineHeight: 1.4,
-                    color: 'var(--cp-danger)',
-                    opacity: 0.85,
-                    marginTop: 4,
-                  }}
-                >
-                  Verifique o email e a palavra-passe e tente novamente.
-                </p>
-              </div>
-            </div>
+            <InlineNotification
+              status="danger"
+              title={error}
+              description="Verifique o email e a palavra-passe e tente novamente."
+            />
           )}
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div>
-              <label className="cp-label" htmlFor="cp-email">
-                Email
-              </label>
-              <input
-                id="cp-email"
-                className="cp-input"
-                type="email"
-                autoComplete="username"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setError('');
-                }}
-                placeholder="nome@empresa.pt"
-              />
-            </div>
+          <TextInput
+            label="Email"
+            type="email"
+            autoComplete="username"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError('');
+            }}
+            placeholder="nome@empresa.pt"
+          />
 
-            <div>
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'baseline',
-                  marginBottom: 6,
-                }}
-              >
-                <label
-                  className="cp-label"
-                  htmlFor="cp-pass"
-                  style={{ marginBottom: 0, display: 'inline' }}
-                >
-                  Palavra-passe
-                </label>
-                <button type="button" className="cp-btn--link" onClick={onRecover}>
-                  Esqueceu-se da palavra-passe?
-                </button>
-              </div>
-              <input
-                id="cp-pass"
-                className="cp-input"
-                type="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  setError('');
-                }}
-                placeholder="••••••••"
-              />
+          <div>
+            <TextInput
+              label="Palavra-passe"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError('');
+              }}
+              placeholder="••••••••"
+            />
+            <div className="cp-stack-end">
+              <Button variant="ghost" size="sm" type="button" onClick={onRecover}>
+                Esqueceu-se da palavra-passe?
+              </Button>
             </div>
           </div>
 
-          <button
-            type="submit"
-            className="cp-btn cp-btn--accent cp-btn--glow cp-btn--block"
-            style={{ padding: '13px 20px', fontSize: 15 }}
-          >
+          <Button type="submit" variant="accent" size="lg" fullWidth>
             Iniciar sessão
-          </button>
+          </Button>
 
-          <p
-            style={{
-              fontSize: 12,
-              lineHeight: 1.5,
-              color: 'var(--cp-text-faint)',
-              padding: '12px 14px',
-              background: 'var(--cp-surface-alt)',
-              borderRadius: 'var(--cp-radius)',
-              border: '1px solid var(--cp-border)',
-            }}
-          >
-            Demo: <strong style={{ color: 'var(--cp-text-muted)' }}>{demoEmail}</strong> ·
-            palavra-passe <strong style={{ color: 'var(--cp-text-muted)' }}>{DEMO_PASSWORD}</strong>
+          <p className="cp-login__demo">
+            Demo: <strong>{demoEmail}</strong> · palavra-passe <strong>{DEMO_PASSWORD}</strong>
           </p>
         </form>
       </div>

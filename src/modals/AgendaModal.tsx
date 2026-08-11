@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { ErrorNote, Modal } from '../components/Modal';
+import { Button, DatePicker, InlineNotification, Select, TextInput } from '@constructpluseu/react';
+import { Modal } from '../components/Modal';
 import { RichTextField } from '../components/RichTextField';
-import { ESTADOS, toneOf } from '../domain/status';
+import { ESTADOS } from '../domain/status';
 import type { Estado, Marcacao } from '../domain/types';
+
+const ESTADO_OPTIONS = ESTADOS.map((e) => ({ value: e, label: e }));
 
 interface AgendaModalProps {
   /** `null` for a new marcação. */
@@ -64,141 +67,69 @@ export function AgendaModal({ record, prefill, onClose, onSave, onDelete }: Agen
     <Modal
       title={record ? 'Editar marcação' : 'Nova marcação'}
       subtitle="Campos com * são obrigatórios."
-      maxWidth={640}
+      size="md"
       onClose={onClose}
       destructive={
         record && (
-          <button
-            type="button"
-            className="cp-btn cp-btn--danger-outline"
-            onClick={() => onDelete(record)}
-          >
+          <Button variant="danger" onClick={() => onDelete(record)} disabled={saving}>
             Eliminar
-          </button>
+          </Button>
         )
       }
       actions={
         <>
-          <button
-            type="button"
-            className="cp-btn cp-btn--outline"
-            onClick={onClose}
-            disabled={saving}
-          >
+          <Button variant="secondary" onClick={onClose} disabled={saving}>
             Fechar
-          </button>
-          <button
-            type="button"
-            className="cp-btn cp-btn--accent"
-            onClick={save}
-            disabled={saving}
-          >
-            {saving ? 'A guardar…' : 'Guardar marcação'}
-          </button>
+          </Button>
+          <Button variant="accent" onClick={save} loading={saving}>
+            Guardar marcação
+          </Button>
         </>
       }
     >
-      <div>
-        <label className="cp-label" htmlFor="ag-desc">
-          Descrição *
-        </label>
-        <input
-          id="ag-desc"
-          className={descInvalid ? 'cp-input cp-input--invalid' : 'cp-input'}
-          type="text"
-          value={draft.descricao}
-          onChange={(e) => patch({ descricao: e.target.value })}
-          placeholder="Ex.: Vistoria de estrutura — Rua do Carmo"
-          aria-invalid={descInvalid}
+      <TextInput
+        label="Descrição *"
+        value={draft.descricao}
+        onChange={(e) => patch({ descricao: e.target.value })}
+        placeholder="Ex.: Vistoria de estrutura — Rua do Carmo"
+        errorText={descInvalid ? 'Obrigatório' : undefined}
+      />
+
+      <Select
+        label="Estado"
+        options={ESTADO_OPTIONS}
+        value={draft.estado}
+        onChange={(e) => patch({ estado: e.target.value as Estado })}
+      />
+
+      <div className="cp-field-grid">
+        <DatePicker
+          label="Data de início *"
+          value={draft.inicioData || null}
+          onChange={(v) => patch({ inicioData: v ?? '' })}
+        />
+        <TextInput
+          label="Hora de início *"
+          type="time"
+          value={draft.inicioHora}
+          onChange={(e) => patch({ inicioHora: e.target.value })}
+        />
+        <DatePicker
+          label="Data de fim *"
+          value={draft.fimData || null}
+          onChange={(v) => patch({ fimData: v ?? '' })}
+          errorText={fimInvalid ? 'Obrigatório' : undefined}
+        />
+        <TextInput
+          label="Hora de fim *"
+          type="time"
+          value={draft.fimHora}
+          onChange={(e) => patch({ fimHora: e.target.value })}
+          errorText={fimInvalid ? 'Obrigatório' : undefined}
         />
       </div>
 
-      <div>
-        <span className="cp-label">Estado</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }} role="group">
-          {ESTADOS.map((estado: Estado) => {
-            const on = draft.estado === estado;
-            const tone = toneOf(estado);
-            return (
-              <button
-                key={estado}
-                type="button"
-                className="cp-toggle-chip"
-                aria-pressed={on}
-                onClick={() => patch({ estado })}
-                style={
-                  on
-                    ? { background: tone.bg, color: tone.fg, borderColor: tone.border }
-                    : undefined
-                }
-              >
-                {estado}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: 16,
-        }}
-      >
-        <div>
-          <label className="cp-label" htmlFor="ag-ini-d">
-            Data de início *
-          </label>
-          <input
-            id="ag-ini-d"
-            className="cp-input"
-            type="date"
-            value={draft.inicioData}
-            onChange={(e) => patch({ inicioData: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="ag-ini-h">
-            Hora de início *
-          </label>
-          <input
-            id="ag-ini-h"
-            className="cp-input"
-            type="time"
-            value={draft.inicioHora}
-            onChange={(e) => patch({ inicioHora: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="ag-fim-d">
-            Data de fim *
-          </label>
-          <input
-            id="ag-fim-d"
-            className={fimInvalid ? 'cp-input cp-input--invalid' : 'cp-input'}
-            type="date"
-            value={draft.fimData}
-            onChange={(e) => patch({ fimData: e.target.value })}
-            aria-invalid={fimInvalid}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="ag-fim-h">
-            Hora de fim *
-          </label>
-          <input
-            id="ag-fim-h"
-            className={fimInvalid ? 'cp-input cp-input--invalid' : 'cp-input'}
-            type="time"
-            value={draft.fimHora}
-            onChange={(e) => patch({ fimHora: e.target.value })}
-            aria-invalid={fimInvalid}
-          />
-        </div>
-      </div>
-
-      {error && <ErrorNote>{error}</ErrorNote>}
+      {error && <InlineNotification status="danger" title={error} />}
 
       <RichTextField
         label="Detalhes e notas"

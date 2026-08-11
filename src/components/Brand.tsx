@@ -1,5 +1,5 @@
 interface BrandProps {
-  /** `onDark` puts a solid accent tile next to white type; `onLight` inverts it. */
+  /** `onDark` puts a solid accent tile next to inverse type; `onLight` inverts it. */
   tone: 'onDark' | 'onLight';
   tile?: number;
   fontSize?: number;
@@ -8,41 +8,35 @@ interface BrandProps {
 export function Brand({ tone, tile = 34, fontSize = 20 }: BrandProps) {
   const onDark = tone === 'onDark';
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+    <div className="cp-brand">
       <div
         aria-hidden
+        className="cp-brand__tile"
         style={{
           width: tile,
           height: tile,
-          flex: 'none',
-          borderRadius: 'var(--cp-radius)',
-          background: onDark ? 'var(--cp-accent)' : 'var(--cp-navy)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          background: onDark
+            ? 'var(--cp-color-semantic-bg-accent)'
+            : 'var(--cp-color-semantic-bg-brand)',
         }}
       >
         {!onDark && (
           <div
-            style={{
-              width: Math.round(tile * 0.35),
-              height: Math.round(tile * 0.35),
-              borderRadius: 'var(--cp-radius)',
-              background: 'var(--cp-accent)',
-            }}
+            className="cp-brand__pip"
+            style={{ width: Math.round(tile * 0.35), height: Math.round(tile * 0.35) }}
           />
         )}
       </div>
       <span
+        className="cp-brand__word"
         style={{
           fontSize,
-          fontWeight: 700,
-          letterSpacing: '-0.01em',
-          color: onDark ? '#fff' : 'var(--cp-navy)',
-          whiteSpace: 'nowrap',
+          color: onDark
+            ? 'var(--cp-color-semantic-text-on-brand)'
+            : 'var(--cp-color-semantic-text-primary)',
         }}
       >
-        Construct<span style={{ color: 'var(--cp-accent)' }}>+</span>
+        Construct<span className="cp-brand__plus">+</span>
       </span>
     </div>
   );

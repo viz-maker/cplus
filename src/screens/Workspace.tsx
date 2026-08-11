@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { ToastProvider } from '@constructpluseu/react';
 import { Brand } from '../components/Brand';
 import { AppStoreProvider } from '../store/AppStore';
 import { ConstructPlusApp } from './ConstructPlusApp';
@@ -14,6 +15,8 @@ import { ConstructPlusApp } from './ConstructPlusApp';
  * browser produces. This is an authenticated internal tool with no SEO value,
  * so paying one frame of splash is cheaper than defending every component
  * against hydration drift.
+ *
+ * `ToastProvider` sits outside the store because the store raises toasts.
  */
 export function Workspace() {
   const [mounted, setMounted] = useState(false);
@@ -23,9 +26,11 @@ export function Workspace() {
   if (!mounted) return <BootSplash />;
 
   return (
-    <AppStoreProvider>
-      <ConstructPlusApp />
-    </AppStoreProvider>
+    <ToastProvider>
+      <AppStoreProvider>
+        <ConstructPlusApp />
+      </AppStoreProvider>
+    </ToastProvider>
   );
 }
 
@@ -34,7 +39,7 @@ function BootSplash() {
     <div
       style={{
         minHeight: '100vh',
-        background: 'var(--cp-navy)',
+        background: 'var(--cp-color-semantic-bg-brand)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

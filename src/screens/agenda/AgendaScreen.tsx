@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
+import { Button, Card, Tabs } from '@constructpluseu/react';
 import { eventsOn } from '../../domain/selectors';
-import { toneOf } from '../../domain/status';
+import { varsOf } from '../../domain/status';
 import { CALENDAR_MODES } from '../../domain/types';
 import { DOWS, dowIndex, fromIso, iso, pad } from '../../lib/date';
 import { HOURS, daysForMode, monthWeeks, rangeLabel, shiftCursor, yearGrid } from './calendar';
@@ -16,6 +17,11 @@ interface AgendaScreenProps {
   onCreateAt: (date: string, hora: string) => void;
 }
 
+/**
+ * The design system has no calendar component, so the grids stay hand-built.
+ * They are styled entirely with design-system tokens, so they follow both
+ * themes; only the shell around them (Card, Tabs, Button) comes from the DS.
+ */
 export function AgendaScreen({
   agenda,
   today,
@@ -29,77 +35,21 @@ export function AgendaScreen({
   const todayIso = iso(today);
   const label = useMemo(() => rangeLabel(cursor, mode), [cursor, mode]);
 
-  return (
-    <section className="cp-card cp-card--clip" aria-label="Agenda">
-      <div className="cp-card__header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-          <button
-            type="button"
-            className="cp-btn cp-btn--subtle cp-btn--icon-lg"
-            aria-label="Período anterior"
-            onClick={() => setCursor((c) => shiftCursor(c, mode, -1))}
-          >
-            ‹
-          </button>
-          <button
-            type="button"
-            className="cp-btn cp-btn--subtle cp-btn--icon-lg"
-            aria-label="Período seguinte"
-            onClick={() => setCursor((c) => shiftCursor(c, mode, 1))}
-          >
-            ›
-          </button>
-          <button
-            type="button"
-            className="cp-btn cp-btn--subtle"
-            style={{ padding: '8px 16px', fontSize: 13 }}
-            onClick={() => setCursor(today)}
-          >
-            Hoje
-          </button>
-          <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--cp-navy)', marginLeft: 8 }}>
-            {label}
-          </p>
-        </div>
-
-        <div
-          role="tablist"
-          aria-label="Vista do calendário"
-          style={{
-            display: 'flex',
-            gap: 4,
-            padding: 4,
-            background: 'var(--cp-surface-alt)',
-            borderRadius: 'var(--cp-radius)',
-          }}
-        >
-          {CALENDAR_MODES.map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="tab"
-              aria-selected={mode === m}
-              className={mode === m ? 'cp-cal-mode is-active' : 'cp-cal-mode'}
-              onClick={() => setMode(m)}
-            >
-              {m}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {(mode === 'Dia' || mode === 'Semana') && (
+  function viewFor(m: CalendarMode) {
+    if (m === 'Dia' || m === 'Semana') {
+      return (
         <TimeGrid
-          days={daysForMode(cursor, mode)}
+          days={daysForMode(cursor, m)}
           agenda={agenda}
           todayIso={todayIso}
-          minWidth={mode === 'Dia' ? '100%' : '860px'}
+          minWidth={m === 'Dia' ? '100%' : '860px'}
           onOpenEvent={onOpenEvent}
           onCreateAt={onCreateAt}
         />
-      )}
-
-      {mode === 'Mês' && (
+      );
+    }
+    if (m === 'Mês') {
+      return (
         <MonthGrid
           cursor={cursor}
           agenda={agenda}
@@ -107,19 +57,56 @@ export function AgendaScreen({
           onOpenEvent={onOpenEvent}
           onCreateAt={onCreateAt}
         />
-      )}
+      );
+    }
+    return (
+      <YearGrid
+        year={cursor.getFullYear()}
+        agenda={agenda}
+        onOpenMonth={(month) => {
+          setCursor(new Date(cursor.getFullYear(), month, 1));
+          setMode('Mês');
+        }}
+      />
+    );
+  }
 
-      {mode === 'Ano' && (
-        <YearGrid
-          year={cursor.getFullYear()}
-          agenda={agenda}
-          onOpenMonth={(month) => {
-            setCursor(new Date(cursor.getFullYear(), month, 1));
-            setMode('Mês');
-          }}
-        />
-      )}
-    </section>
+  return (
+    <Card>
+      <div className="cp-cal-toolbar">
+        <Button
+          variant="secondary"
+          size="sm"
+          aria-label="Período anterior"
+          onClick={() => setCursor((c) => shiftCursor(c, mode, -1))}
+        >
+          ‹
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          aria-label="Período seguinte"
+          onClick={() => setCursor((c) => shiftCursor(c, mode, 1))}
+        >
+          ›
+        </Button>
+        <Button variant="secondary" size="sm" onClick={() => setCursor(today)}>
+          Hoje
+        </Button>
+        <p className="cp-cal-range">{label}</p>
+      </div>
+
+      <Tabs
+        aria-label="Vista do calendário"
+        value={mode}
+        onValueChange={(id) => setMode(id as CalendarMode)}
+        items={CALENDAR_MODES.map((m) => ({
+          id: m,
+          label: m,
+          content: mode === m ? viewFor(m) : null,
+        }))}
+      />
+    </Card>
   );
 }
 
@@ -140,46 +127,12 @@ function TimeGrid({ days, agenda, todayIso, minWidth, onOpenEvent, onCreateAt }:
   return (
     <div className="cp-scroll-x">
       <div style={{ minWidth }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: template,
-            borderBottom: '1px solid var(--cp-border)',
-            position: 'sticky',
-            top: 0,
-            background: 'var(--cp-surface)',
-            zIndex: 2,
-          }}
-        >
+        <div className="cp-cal-head" style={{ gridTemplateColumns: template }}>
           <div />
           {days.map((d) => (
-            <div
-              key={iso(d)}
-              style={{
-                padding: '12px 8px',
-                textAlign: 'center',
-                borderLeft: '1px solid var(--cp-border-subtle)',
-              }}
-            >
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 500,
-                  color: 'var(--cp-text-faint)',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.06em',
-                }}
-              >
-                {DOWS[dowIndex(d)]}
-              </p>
-              <p
-                style={{
-                  fontSize: 18,
-                  fontWeight: 600,
-                  marginTop: 4,
-                  color: iso(d) === todayIso ? 'var(--cp-accent-active)' : 'var(--cp-navy)',
-                }}
-              >
+            <div key={iso(d)} className="cp-cal-head__cell">
+              <p className="cp-cal-dow">{DOWS[dowIndex(d)]}</p>
+              <p className={iso(d) === todayIso ? 'cp-cal-daynum is-today' : 'cp-cal-daynum'}>
                 {d.getDate()}
               </p>
             </div>
@@ -187,24 +140,8 @@ function TimeGrid({ days, agenda, todayIso, minWidth, onOpenEvent, onCreateAt }:
         </div>
 
         {HOURS.map((hour) => (
-          <div
-            key={hour}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: template,
-              borderBottom: '1px solid var(--cp-border-subtle)',
-            }}
-          >
-            <div
-              style={{
-                padding: 8,
-                textAlign: 'right',
-                fontSize: 11,
-                color: 'var(--cp-text-faint)',
-              }}
-            >
-              {pad(hour)}:00
-            </div>
+          <div key={hour} className="cp-cal-row" style={{ gridTemplateColumns: template }}>
+            <div className="cp-cal-hour">{pad(hour)}:00</div>
             {days.map((d) => {
               const date = iso(d);
               const slotEvents = eventsOn(agenda, date).filter(
@@ -213,21 +150,12 @@ function TimeGrid({ days, agenda, todayIso, minWidth, onOpenEvent, onCreateAt }:
               return (
                 <div
                   key={date}
-                  className="cp-cal-cell"
+                  className={date === todayIso ? 'cp-cal-cell is-today' : 'cp-cal-cell'}
                   title="Criar marcação"
                   onClick={() => onCreateAt(date, `${pad(hour)}:00`)}
-                  style={{
-                    minHeight: 56,
-                    borderLeft: '1px solid var(--cp-border-subtle)',
-                    padding: 4,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 3,
-                    background: date === todayIso ? '#FBFDFE' : 'var(--cp-surface)',
-                  }}
                 >
                   {slotEvents.map((e) => {
-                    const tone = toneOf(e.estado);
+                    const tone = varsOf(e.estado);
                     return (
                       <button
                         key={e.id}
@@ -239,21 +167,12 @@ function TimeGrid({ days, agenda, todayIso, minWidth, onOpenEvent, onCreateAt }:
                           onOpenEvent(e);
                         }}
                       >
-                        <p
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 600,
-                            color: tone.fg,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
+                        <span className="cp-event__title" style={{ color: tone.fg }}>
                           {e.descricao}
-                        </p>
-                        <p style={{ fontSize: 10, color: 'var(--cp-text-muted)', marginTop: 2 }}>
+                        </span>
+                        <span className="cp-event__time">
                           {e.inicioHora}–{e.fimHora || '?'}
-                        </p>
+                        </span>
                       </button>
                     );
                   })}
@@ -286,36 +205,16 @@ function MonthGrid({ cursor, agenda, todayIso, onOpenEvent, onCreateAt }: MonthG
   return (
     <div className="cp-scroll-x">
       <div style={{ minWidth: 700 }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
-            borderBottom: '1px solid var(--cp-border)',
-          }}
-        >
+        <div className="cp-cal-monthhead">
           {DOWS.map((d) => (
-            <div
-              key={d}
-              style={{
-                padding: 10,
-                textAlign: 'center',
-                fontSize: 11,
-                fontWeight: 500,
-                color: 'var(--cp-text-faint)',
-                textTransform: 'uppercase',
-                letterSpacing: '0.06em',
-              }}
-            >
+            <div key={d} className="cp-cal-dow">
               {d}
             </div>
           ))}
         </div>
 
         {weeks.map((week, wi) => (
-          <div
-            key={wi}
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(7, minmax(0, 1fr))' }}
-          >
+          <div key={wi} className="cp-cal-week">
             {week.map((d) => {
               const date = iso(d);
               const dayEvents = eventsOn(agenda, date);
@@ -326,75 +225,34 @@ function MonthGrid({ cursor, agenda, todayIso, onOpenEvent, onCreateAt }: MonthG
               return (
                 <div
                   key={date}
-                  className="cp-cal-cell"
+                  className={outside ? 'cp-cal-day is-outside' : 'cp-cal-day'}
                   onClick={() => onCreateAt(date, '09:00')}
-                  style={{
-                    minHeight: 112,
-                    borderTop: '1px solid var(--cp-border-subtle)',
-                    borderLeft: '1px solid var(--cp-border-subtle)',
-                    padding: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 4,
-                    background: outside ? '#FBFCFE' : 'var(--cp-surface)',
-                  }}
                 >
-                  <span
-                    style={{
-                      alignSelf: 'flex-start',
-                      padding: '2px 7px',
-                      borderRadius: 'var(--cp-radius-pill)',
-                      fontSize: 13,
-                      fontWeight: 600,
-                      background: isToday ? 'var(--cp-accent)' : 'transparent',
-                      color: isToday
-                        ? '#fff'
-                        : outside
-                          ? 'var(--cp-text-faint)'
-                          : 'var(--cp-navy)',
-                    }}
-                  >
+                  <span className={isToday ? 'cp-cal-daypill is-today' : 'cp-cal-daypill'}>
                     {d.getDate()}
                   </span>
 
                   {dayEvents.slice(0, MONTH_CELL_LIMIT).map((e) => {
-                    const tone = toneOf(e.estado);
+                    const tone = varsOf(e.estado);
                     return (
                       <button
                         key={e.id}
                         type="button"
-                        className="cp-event"
-                        style={{
-                          background: tone.bg,
-                          borderLeft: 'none',
-                          padding: '3px 7px',
-                        }}
+                        className="cp-event cp-event--compact"
+                        style={{ background: tone.bg }}
                         onClick={(ev) => {
                           ev.stopPropagation();
                           onOpenEvent(e);
                         }}
                       >
-                        <p
-                          style={{
-                            fontSize: 11,
-                            fontWeight: 500,
-                            color: tone.fg,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
+                        <span className="cp-event__title" style={{ color: tone.fg }}>
                           {e.inicioHora} {e.descricao}
-                        </p>
+                        </span>
                       </button>
                     );
                   })}
 
-                  {hidden > 0 && (
-                    <p style={{ fontSize: 10, fontWeight: 500, color: 'var(--cp-text-faint)' }}>
-                      +{hidden} marcações
-                    </p>
-                  )}
+                  {hidden > 0 && <p className="cp-cal-more">+{hidden} marcações</p>}
                 </div>
               );
             })}
@@ -417,14 +275,7 @@ function YearGrid({ year, agenda, onOpenMonth }: YearGridProps) {
   const months = useMemo(() => yearGrid(year), [year]);
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
-        gap: 16,
-        padding: 20,
-      }}
-    >
+    <div className="cp-cal-year">
       {months.map((m) => {
         const count = agenda.filter((a) => {
           const d = fromIso(a.inicioData);
@@ -435,67 +286,27 @@ function YearGrid({ year, agenda, onOpenMonth }: YearGridProps) {
           <button
             key={m.month}
             type="button"
-            className="cp-cal-cell"
+            className="cp-cal-minimonth"
             onClick={() => onOpenMonth(m.month)}
-            style={{
-              border: '1px solid var(--cp-border)',
-              borderRadius: 'var(--cp-radius)',
-              padding: 12,
-              background: 'var(--cp-surface)',
-              textAlign: 'left',
-            }}
           >
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                marginBottom: 8,
-              }}
-            >
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 600,
-                  color: 'var(--cp-navy)',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {m.name}
-              </p>
-              {count > 0 && (
-                <span style={{ fontSize: 11, fontWeight: 500, color: 'var(--cp-accent-active)' }}>
-                  {count} marc.
-                </span>
-              )}
-            </div>
+            <span className="cp-cal-minimonth__head">
+              <span className="cp-cal-minimonth__name">{m.name}</span>
+              {count > 0 && <span className="cp-cal-minimonth__count">{count} marc.</span>}
+            </span>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+            <span className="cp-cal-minimonth__grid">
               {m.cells.map((d, i) => {
                 const busy = d ? eventsOn(agenda, iso(d)).length > 0 : false;
                 return (
-                  <div
+                  <span
                     key={i}
-                    style={{
-                      aspectRatio: '1',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: 10,
-                      borderRadius: 'var(--cp-radius)',
-                      background: busy ? 'rgba(62,201,142,0.18)' : 'transparent',
-                      color: busy
-                        ? 'var(--cp-accent-active)'
-                        : d
-                          ? 'var(--cp-text-muted)'
-                          : 'var(--cp-border-strong)',
-                    }}
+                    className={busy ? 'cp-cal-minicell is-busy' : 'cp-cal-minicell'}
                   >
                     {d ? d.getDate() : ''}
-                  </div>
+                  </span>
                 );
               })}
-            </div>
+            </span>
           </button>
         );
       })}

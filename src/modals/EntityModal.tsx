@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Button, Combobox, TextInput } from '@constructpluseu/react';
 import { Modal } from '../components/Modal';
 import type { Categoria, DataState, EntityKind, Grupo, Id, SubGrupo } from '../domain/types';
 
@@ -41,14 +42,7 @@ function associationsOf(kind: EntityKind, data: DataState): Association | null {
   return null;
 }
 
-export function EntityModal({
-  kind,
-  record,
-  data,
-  onClose,
-  onSave,
-  onDelete,
-}: EntityModalProps) {
+export function EntityModal({ kind, record, data, onClose, onSave, onDelete }: EntityModalProps) {
   const copy = COPY[kind];
   const assoc = associationsOf(kind, data);
 
@@ -58,7 +52,6 @@ export function EntityModal({
     return ((record as Categoria & Grupo)[assoc.key] as Id[] | undefined) ?? [];
   });
   const [error, setError] = useState('');
-  const [pickerOpen, setPickerOpen] = useState(false);
   const [saving, setSaving] = useState(false);
 
   async function save() {
@@ -84,164 +77,46 @@ export function EntityModal({
   return (
     <Modal
       title={`${record ? 'Editar' : 'Adicionar'} ${copy.noun}`}
-      maxWidth={520}
+      size="sm"
       onClose={onClose}
       destructive={
         record && (
-          <button
-            type="button"
-            className="cp-btn cp-btn--danger-outline"
-            onClick={() => onDelete(kind, record)}
-          >
+          <Button variant="danger" onClick={() => onDelete(kind, record)} disabled={saving}>
             Eliminar
-          </button>
+          </Button>
         )
       }
       actions={
         <>
-          <button
-            type="button"
-            className="cp-btn cp-btn--outline"
-            onClick={onClose}
-            disabled={saving}
-          >
+          <Button variant="secondary" onClick={onClose} disabled={saving}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            className="cp-btn cp-btn--accent"
-            onClick={save}
-            disabled={saving}
-          >
-            {saving ? 'A guardar…' : 'Guardar'}
-          </button>
+          </Button>
+          <Button variant="accent" onClick={save} loading={saving}>
+            Guardar
+          </Button>
         </>
       }
     >
-      <div>
-        <label className="cp-label" htmlFor="ent-nome">
-          Nome *
-        </label>
-        <input
-          id="ent-nome"
-          className={error ? 'cp-input cp-input--invalid' : 'cp-input'}
-          type="text"
-          value={nome}
-          onChange={(e) => {
-            setNome(e.target.value);
-            setError('');
-          }}
-          placeholder={copy.placeholder}
-          aria-invalid={!!error}
-        />
-        {error && (
-          <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--cp-danger)', marginTop: 6 }}>
-            {error}
-          </p>
-        )}
-      </div>
+      <TextInput
+        label="Nome *"
+        value={nome}
+        onChange={(e) => {
+          setNome(e.target.value);
+          setError('');
+        }}
+        placeholder={copy.placeholder}
+        errorText={error || undefined}
+      />
 
       {assoc && (
-        <div>
-          <span className="cp-label">{copy.multiLabel}</span>
-          <div
-            style={{
-              border: '1px solid var(--cp-border)',
-              borderRadius: 'var(--cp-radius)',
-              padding: '10px 12px',
-              background: 'var(--cp-surface)',
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 8,
-              minHeight: 46,
-              alignItems: 'center',
-            }}
-          >
-            {selected.map((id) => {
-              const option = assoc.options.find((o) => o.id === id);
-              return (
-                <span key={id} className="cp-chip">
-                  {option?.nome ?? '—'}
-                  <button
-                    type="button"
-                    className="cp-chip__remove"
-                    aria-label={`Remover ${option?.nome ?? 'associação'}`}
-                    onClick={() => setSelected((cur) => cur.filter((v) => v !== id))}
-                  >
-                    ×
-                  </button>
-                </span>
-              );
-            })}
-            <button
-              type="button"
-              className="cp-btn cp-btn--dashed"
-              style={{ padding: '5px 12px', fontSize: 13, fontWeight: 500 }}
-              aria-expanded={pickerOpen}
-              onClick={() => setPickerOpen((o) => !o)}
-            >
-              + Associar
-            </button>
-          </div>
-
-          {pickerOpen && (
-            <div
-              style={{
-                marginTop: 8,
-                border: '1px solid var(--cp-border)',
-                borderRadius: 'var(--cp-radius)',
-                boxShadow: 'var(--cp-shadow-overlay)',
-                maxHeight: 200,
-                overflowY: 'auto',
-                background: 'var(--cp-surface)',
-              }}
-            >
-              {assoc.options.map((option) => {
-                const on = selected.includes(option.id);
-                return (
-                  <button
-                    key={option.id}
-                    type="button"
-                    role="checkbox"
-                    aria-checked={on}
-                    onClick={() =>
-                      setSelected((cur) =>
-                        on ? cur.filter((v) => v !== option.id) : [...cur, option.id],
-                      )
-                    }
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 10,
-                      width: '100%',
-                      padding: '10px 14px',
-                      border: 'none',
-                      borderRadius: 'var(--cp-radius)',
-                      background: on ? 'var(--cp-accent-softer)' : 'var(--cp-surface)',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      fontSize: 14,
-                      color: 'var(--cp-navy)',
-                    }}
-                  >
-                    <span
-                      aria-hidden
-                      style={{
-                        width: 16,
-                        height: 16,
-                        flex: 'none',
-                        borderRadius: 'var(--cp-radius)',
-                        border: `1px solid ${on ? 'var(--cp-accent)' : 'var(--cp-border-strong)'}`,
-                        background: on ? 'var(--cp-accent)' : 'var(--cp-surface)',
-                      }}
-                    />
-                    {option.nome}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        <Combobox
+          label={copy.multiLabel}
+          multiple
+          options={assoc.options.map((o) => ({ value: o.id, label: o.nome }))}
+          value={selected}
+          onChange={setSelected}
+          placeholder="Procurar para associar…"
+        />
       )}
     </Modal>
   );

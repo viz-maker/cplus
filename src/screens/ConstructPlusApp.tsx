@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { DataStatePanel } from '../components/DataStatePanel';
 import { DetailDrawer, type DetailView } from '../components/DetailDrawer';
-import { Toasts } from '../components/Toasts';
 import { PAGES } from '../domain/navigation';
 import { quoteGross } from '../domain/selectors';
 import { AgendaModal } from '../modals/AgendaModal';
@@ -62,7 +61,7 @@ interface PendingDelete {
 }
 
 export function ConstructPlusApp() {
-  const { today, data, isLoading, loadError, reload, save, remove, toasts, toast, reportError } =
+  const { today, data, isLoading, loadError, reload, save, remove, toast, reportError } =
     useStore();
 
   const [screen, setScreen] = useState<Screen>('login');
@@ -214,7 +213,6 @@ export function ConstructPlusApp() {
             toast('err', message, 'As credenciais não correspondem a nenhuma conta ativa.')
           }
         />
-        <Toasts toasts={toasts} />
       </>
     );
   }
@@ -223,7 +221,6 @@ export function ConstructPlusApp() {
     return (
       <>
         <RecoverScreen onBackToLogin={() => setScreen('login')} />
-        <Toasts toasts={toasts} />
       </>
     );
   }
@@ -396,7 +393,6 @@ export function ConstructPlusApp() {
         />
       )}
 
-      <Toasts toasts={toasts} />
     </>
   );
 }

@@ -1,9 +1,8 @@
 import { useState } from 'react';
+import { Button, Checkbox, InlineNotification, TextInput } from '@constructpluseu/react';
 import { Modal } from '../components/Modal';
-import { PARTNER_TONE } from '../domain/status';
+import { TIPOS_PARCEIRO } from '../domain/types';
 import type { Parceiro, TipoParceiro } from '../domain/types';
-
-const TIPOS: TipoParceiro[] = ['Cliente', 'Fornecedor'];
 
 interface PartnerModalProps {
   /** `null` for a new partner. */
@@ -60,143 +59,75 @@ export function PartnerModal({ record, onClose, onSave, onDelete }: PartnerModal
   return (
     <Modal
       title={record ? 'Editar parceiro' : 'Adicionar parceiro'}
-      maxWidth={560}
+      size="md"
       onClose={onClose}
       destructive={
         record && (
-          <button
-            type="button"
-            className="cp-btn cp-btn--danger-outline"
-            onClick={() => onDelete(record)}
-          >
+          <Button variant="danger" onClick={() => onDelete(record)} disabled={saving}>
             Eliminar
-          </button>
+          </Button>
         )
       }
       actions={
         <>
-          <button
-            type="button"
-            className="cp-btn cp-btn--outline"
-            onClick={onClose}
-            disabled={saving}
-          >
+          <Button variant="secondary" onClick={onClose} disabled={saving}>
             Cancelar
-          </button>
-          <button
-            type="button"
-            className="cp-btn cp-btn--accent"
-            onClick={save}
-            disabled={saving}
-          >
-            {saving ? 'A guardar…' : 'Guardar parceiro'}
-          </button>
+          </Button>
+          <Button variant="accent" onClick={save} loading={saving}>
+            Guardar parceiro
+          </Button>
         </>
       }
     >
-      <div>
-        <label className="cp-label" htmlFor="pa-nome">
-          Nome do parceiro *
-        </label>
-        <input
-          id="pa-nome"
-          className={error ? 'cp-input cp-input--invalid' : 'cp-input'}
-          type="text"
-          value={draft.nome}
-          onChange={(e) => patch({ nome: e.target.value })}
-          placeholder="Ex.: Almeida & Filhos, Lda"
-          aria-invalid={!!error}
+      <TextInput
+        label="Nome do parceiro *"
+        value={draft.nome}
+        onChange={(e) => patch({ nome: e.target.value })}
+        placeholder="Ex.: Almeida & Filhos, Lda"
+        errorText={error && !draft.nome.trim() ? error : undefined}
+      />
+
+      <fieldset className="cp-fieldset">
+        <legend className="cp-field-label">Tipo de parceiro</legend>
+        <div className="cp-checkbox-row">
+          {TIPOS_PARCEIRO.map((t) => (
+            <Checkbox
+              key={t}
+              label={t}
+              checked={draft.tipos.includes(t)}
+              onChange={() => toggleTipo(t)}
+            />
+          ))}
+        </div>
+        <p className="cp-help">Um parceiro pode ser cliente e fornecedor em simultâneo.</p>
+      </fieldset>
+
+      {error && draft.nome.trim() && <InlineNotification status="danger" title={error} />}
+
+      <div className="cp-field-grid">
+        <TextInput
+          label="NIF"
+          inputMode="numeric"
+          value={draft.nif}
+          onChange={(e) => patch({ nif: e.target.value })}
         />
-        {error && (
-          <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--cp-danger)', marginTop: 6 }}>
-            {error}
-          </p>
-        )}
-      </div>
-
-      <div>
-        <span className="cp-label">Tipo de parceiro</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }} role="group">
-          {TIPOS.map((t) => {
-            const on = draft.tipos.includes(t);
-            const tone = PARTNER_TONE[t];
-            return (
-              <button
-                key={t}
-                type="button"
-                className="cp-toggle-chip cp-toggle-chip--lg"
-                aria-pressed={on}
-                onClick={() => toggleTipo(t)}
-                style={
-                  on ? { background: tone.bg, color: tone.fg, borderColor: tone.border } : undefined
-                }
-              >
-                {t}
-              </button>
-            );
-          })}
-        </div>
-        <p className="cp-help" style={{ marginTop: 8, fontSize: 12 }}>
-          Um parceiro pode ser cliente e fornecedor em simultâneo.
-        </p>
-      </div>
-
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-          gap: 16,
-        }}
-      >
-        <div>
-          <label className="cp-label" htmlFor="pa-nif">
-            NIF
-          </label>
-          <input
-            id="pa-nif"
-            className="cp-input"
-            type="text"
-            inputMode="numeric"
-            value={draft.nif}
-            onChange={(e) => patch({ nif: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="pa-email">
-            Email
-          </label>
-          <input
-            id="pa-email"
-            className="cp-input"
-            type="email"
-            value={draft.email}
-            onChange={(e) => patch({ email: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="pa-tel">
-            Telefone
-          </label>
-          <input
-            id="pa-tel"
-            className="cp-input"
-            type="tel"
-            value={draft.telefone}
-            onChange={(e) => patch({ telefone: e.target.value })}
-          />
-        </div>
-        <div>
-          <label className="cp-label" htmlFor="pa-loc">
-            Localidade
-          </label>
-          <input
-            id="pa-loc"
-            className="cp-input"
-            type="text"
-            value={draft.localidade}
-            onChange={(e) => patch({ localidade: e.target.value })}
-          />
-        </div>
+        <TextInput
+          label="Email"
+          type="email"
+          value={draft.email}
+          onChange={(e) => patch({ email: e.target.value })}
+        />
+        <TextInput
+          label="Telefone"
+          type="tel"
+          value={draft.telefone}
+          onChange={(e) => patch({ telefone: e.target.value })}
+        />
+        <TextInput
+          label="Localidade"
+          value={draft.localidade}
+          onChange={(e) => patch({ localidade: e.target.value })}
+        />
       </div>
     </Modal>
   );

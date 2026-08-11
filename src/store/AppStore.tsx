@@ -1,30 +1,22 @@
 'use client';
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
+import { useToast } from '@constructpluseu/react';
 import useSWR from 'swr';
 import { ApiError, api } from '../lib/api';
 import { startOfToday } from '../lib/date';
+import type { NotificationStatus } from '@constructpluseu/react';
 import type { CollectionKey, DataState, Id, RecordOf } from '../domain/types';
 
+/** Application vocabulary, mapped once onto the design system's statuses. */
 export type ToastKind = 'ok' | 'err' | 'info';
 
-export interface Toast {
-  id: string;
-  kind: ToastKind;
-  title: string;
-  text?: string;
-}
+const TOAST_STATUS: Record<ToastKind, NotificationStatus> = {
+  ok: 'success',
+  err: 'danger',
+  info: 'info',
+};
 
-const TOAST_TTL = 4200;
 const BOOTSTRAP_KEY = '/api/bootstrap';
 
 interface AppStore {
@@ -40,7 +32,6 @@ interface AppStore {
   save: <K extends CollectionKey>(collection: K, record: RecordOf<K>) => Promise<RecordOf<K>>;
   remove: (collection: CollectionKey, id: Id) => Promise<void>;
 
-  toasts: Toast[];
   toast: (kind: ToastKind, title: string, text?: string) => void;
   /** Turn a failed request into an error toast. */
   reportError: (fallbackTitle: string, error: unknown) => void;
@@ -48,35 +39,21 @@ interface AppStore {
 
 const StoreContext = createContext<AppStore | null>(null);
 
-const toastId = () => 't' + Math.random().toString(36).slice(2, 8);
-
 export function AppStoreProvider({ children }: { children: ReactNode }) {
   const today = useMemo(startOfToday, []);
-  const [toasts, setToasts] = useState<Toast[]>([]);
-  const timers = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  const { show } = useToast();
 
   const { data, error, isLoading, mutate } = useSWR<DataState>(BOOTSTRAP_KEY, api.bootstrap, {
     revalidateOnFocus: false,
     shouldRetryOnError: false,
   });
 
-  useEffect(() => {
-    const pending = timers.current;
-    return () => {
-      pending.forEach(clearTimeout);
-      pending.clear();
-    };
-  }, []);
-
-  const toast = useCallback<AppStore['toast']>((kind, title, text) => {
-    const id = toastId();
-    setToasts((prev) => [...prev, { id, kind, title, text }]);
-    const handle = setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-      timers.current.delete(handle);
-    }, TOAST_TTL);
-    timers.current.add(handle);
-  }, []);
+  const toast = useCallback<AppStore['toast']>(
+    (kind, title, text) => {
+      show({ title, description: text, status: TOAST_STATUS[kind] });
+    },
+    [show],
+  );
 
   const reportError = useCallback<AppStore['reportError']>(
     (fallbackTitle, err) => {
@@ -121,11 +98,10 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
       reload,
       save,
       remove,
-      toasts,
       toast,
       reportError,
     }),
-    [today, data, isLoading, error, reload, save, remove, toasts, toast, reportError],
+    [today, data, isLoading, error, reload, save, remove, toast, reportError],
   );
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

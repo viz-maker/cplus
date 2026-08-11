@@ -10,7 +10,7 @@ import {
   quoteVat,
   subgrupoOfCategoria,
 } from '../../domain/selectors';
-import { NEUTRAL_TONE, PARTNER_TONE, toneOf } from '../../domain/status';
+import { PARTNER_TAG, toneOf } from '../../domain/status';
 import { ptDate } from '../../lib/date';
 import { eur, num } from '../../lib/format';
 import { EMPTY_LIST } from './types';
@@ -26,7 +26,7 @@ import type {
   Route,
   SubGrupo,
 } from '../../domain/types';
-import type { Cell, ListModel } from './types';
+import type { Cell, CellBadge, ListModel } from './types';
 
 /** Everything the rows need to be able to open. */
 export interface ListHandlers {
@@ -37,18 +37,14 @@ export interface ListHandlers {
   showDetail: (view: DetailView) => void;
 }
 
-const cell = (text: string, extra: Partial<Cell> = {}): Cell => ({
-  text,
-  align: 'left',
-  weight: 400,
-  color: 'var(--cp-navy)',
-  ...extra,
-});
+const cell = (text: string, extra: Partial<Cell> = {}): Cell => ({ text, ...extra });
+
+const neutral = (text: string): CellBadge => ({ text, status: 'neutral' });
 
 const dash = (v: string | undefined | null) => (v && v.trim() ? v : '—');
 
 /**
- * Build the table model for a searchable route. `query` is matched
+ * Build the `DataTable` model for a searchable route. `query` is matched
  * case-insensitively against the record's name (plus reference/client/site for
  * quotes).
  */
@@ -83,9 +79,9 @@ export function buildList(
 function buildCategorias(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Nome', align: 'left' },
-      { label: 'Grupos associados', align: 'left' },
-      { label: 'Artigos', align: 'right' },
+      { key: 'nome', header: 'Nome', sortable: true },
+      { key: 'grupos', header: 'Grupos associados' },
+      { key: 'artigos', header: 'Artigos', align: 'end', sortable: true },
     ],
     rows: data.categorias
       .filter((c) => c.nome.toLowerCase().includes(q))
@@ -94,17 +90,11 @@ function buildCategorias(data: DataState, q: string, h: ListHandlers): ListModel
         const grupos = c.grupoIds.map((id) => byId(data.grupos, id)?.nome ?? '—');
         return {
           id: c.id,
-          cells: [
-            cell(c.nome, { weight: 600 }),
-            cell('', {
-              badges: grupos.map((nome) => ({
-                text: nome,
-                bg: NEUTRAL_TONE.bg,
-                fg: NEUTRAL_TONE.fg,
-              })),
-            }),
-            cell(String(artigos), { align: 'right' }),
-          ],
+          cells: {
+            nome: cell(c.nome, { strong: true }),
+            grupos: { badges: grupos.map(neutral) },
+            artigos: cell(String(artigos)),
+          },
           onEdit: () => h.openEntity('categorias', c),
           onView: () =>
             h.showDetail({
@@ -127,9 +117,9 @@ function buildCategorias(data: DataState, q: string, h: ListHandlers): ListModel
 function buildGrupos(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Nome', align: 'left' },
-      { label: 'SubGrupos associados', align: 'left' },
-      { label: 'Categoria', align: 'left' },
+      { key: 'nome', header: 'Nome', sortable: true },
+      { key: 'subgrupos', header: 'SubGrupos associados' },
+      { key: 'categoria', header: 'Categoria', sortable: true },
     ],
     rows: data.grupos
       .filter((g) => g.nome.toLowerCase().includes(q))
@@ -138,17 +128,11 @@ function buildGrupos(data: DataState, q: string, h: ListHandlers): ListModel {
         const subgrupos = g.subgrupoIds.map((id) => byId(data.subgrupos, id)?.nome ?? '—');
         return {
           id: g.id,
-          cells: [
-            cell(g.nome, { weight: 600 }),
-            cell('', {
-              badges: subgrupos.map((nome) => ({
-                text: nome,
-                bg: NEUTRAL_TONE.bg,
-                fg: NEUTRAL_TONE.fg,
-              })),
-            }),
-            cell(categoria?.nome ?? '—', { color: 'var(--cp-text-muted)' }),
-          ],
+          cells: {
+            nome: cell(g.nome, { strong: true }),
+            subgrupos: { badges: subgrupos.map(neutral) },
+            categoria: cell(categoria?.nome ?? '—', { muted: true }),
+          },
           onEdit: () => h.openEntity('grupos', g),
           onView: () =>
             h.showDetail({
@@ -171,8 +155,8 @@ function buildGrupos(data: DataState, q: string, h: ListHandlers): ListModel {
 function buildSubgrupos(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Nome', align: 'left' },
-      { label: 'Grupo', align: 'left' },
+      { key: 'nome', header: 'Nome', sortable: true },
+      { key: 'grupo', header: 'Grupo', sortable: true },
     ],
     rows: data.subgrupos
       .filter((s) => s.nome.toLowerCase().includes(q))
@@ -180,10 +164,10 @@ function buildSubgrupos(data: DataState, q: string, h: ListHandlers): ListModel 
         const grupo = grupoOfSubgrupo(data, s.id);
         return {
           id: s.id,
-          cells: [
-            cell(s.nome, { weight: 600 }),
-            cell(grupo?.nome ?? '—', { color: 'var(--cp-text-muted)' }),
-          ],
+          cells: {
+            nome: cell(s.nome, { strong: true }),
+            grupo: cell(grupo?.nome ?? '—', { muted: true }),
+          },
           onEdit: () => h.openEntity('subgrupos', s),
           onView: () =>
             h.showDetail({
@@ -205,11 +189,11 @@ function buildSubgrupos(data: DataState, q: string, h: ListHandlers): ListModel 
 function buildCatalogo(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Artigo', align: 'left' },
-      { label: 'Categoria', align: 'left' },
-      { label: 'Stock', align: 'right' },
-      { label: 'Preço unit.', align: 'right' },
-      { label: 'Estado', align: 'right' },
+      { key: 'artigo', header: 'Artigo', sortable: true },
+      { key: 'categoria', header: 'Categoria', sortable: true },
+      { key: 'stock', header: 'Stock', align: 'end', sortable: true },
+      { key: 'preco', header: 'Preço unit.', align: 'end', sortable: true },
+      { key: 'estado', header: 'Estado', align: 'end' },
     ],
     rows: data.catalogo
       .filter((i) => i.nome.toLowerCase().includes(q))
@@ -222,31 +206,22 @@ function buildCatalogo(data: DataState, q: string, h: ListHandlers): ListModel {
 
         return {
           id: i.id,
-          cells: [
-            cell(i.nome, { weight: 600, sub: `${i.sku} · ${i.unidade}` }),
-            cell(categoria?.nome ?? '—', {
-              color: 'var(--cp-text-muted)',
-              sub: grupo?.nome ?? '',
-            }),
-            cell(num(i.stock), {
-              align: 'right',
-              color: low ? 'var(--cp-warning)' : 'var(--cp-navy)',
+          cells: {
+            artigo: cell(i.nome, { strong: true, sub: `${i.sku} · ${i.unidade}` }),
+            categoria: cell(categoria?.nome ?? '—', { muted: true, sub: grupo?.nome ?? '' }),
+            stock: cell(num(i.stock), {
+              warn: low,
               sub: low ? 'abaixo do mínimo' : `mín. ${num(i.stockMin)}`,
             }),
-            cell(eur(i.precoUnit), {
-              align: 'right',
-              weight: 600,
-              sub: `markup ${num(i.markup)}%`,
-            }),
-            cell('', {
-              align: 'right',
+            preco: cell(eur(i.precoUnit), { strong: true, sub: `markup ${num(i.markup)}%` }),
+            estado: {
               badges: [
                 i.ativo
-                  ? { text: 'Ativo', bg: 'rgba(62,201,142,0.14)', fg: 'var(--cp-accent-active)' }
-                  : { text: 'Inativo', bg: NEUTRAL_TONE.bg, fg: NEUTRAL_TONE.fg },
+                  ? { text: 'Ativo', status: 'success' as const }
+                  : { text: 'Inativo', status: 'neutral' as const },
               ],
-            }),
-          ],
+            },
+          },
           onEdit: () => h.openItem(i),
           onView: () =>
             h.showDetail({
@@ -282,27 +257,21 @@ function buildCatalogo(data: DataState, q: string, h: ListHandlers): ListModel {
 function buildParceiros(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Nome', align: 'left' },
-      { label: 'Tipo', align: 'left' },
-      { label: 'Contacto', align: 'left' },
-      { label: 'NIF', align: 'right' },
+      { key: 'nome', header: 'Nome', sortable: true },
+      { key: 'tipo', header: 'Tipo' },
+      { key: 'contacto', header: 'Contacto', sortable: true },
+      { key: 'nif', header: 'NIF', align: 'end' },
     ],
     rows: data.parceiros
       .filter((p) => p.nome.toLowerCase().includes(q))
       .map((p) => ({
         id: p.id,
-        cells: [
-          cell(p.nome, { weight: 600, sub: p.localidade }),
-          cell('', {
-            badges: p.tipos.map((t) => ({
-              text: t,
-              bg: PARTNER_TONE[t].bg,
-              fg: PARTNER_TONE[t].fg,
-            })),
-          }),
-          cell(p.email, { color: 'var(--cp-text-muted)', sub: p.telefone }),
-          cell(p.nif, { align: 'right', color: 'var(--cp-text-muted)' }),
-        ],
+        cells: {
+          nome: cell(p.nome, { strong: true, sub: p.localidade }),
+          tipo: { badges: p.tipos.map((t) => ({ text: t, status: PARTNER_TAG[t] })) },
+          contacto: cell(p.email, { muted: true, sub: p.telefone }),
+          nif: cell(p.nif, { muted: true }),
+        },
         onEdit: () => h.openPartner(p),
         onView: () =>
           h.showDetail({
@@ -334,11 +303,11 @@ function buildParceiros(data: DataState, q: string, h: ListHandlers): ListModel 
 function buildOrcamentos(data: DataState, q: string, h: ListHandlers): ListModel {
   return {
     columns: [
-      { label: 'Referência', align: 'left' },
-      { label: 'Cliente', align: 'left' },
-      { label: 'Validade', align: 'left' },
-      { label: 'Estado', align: 'left' },
-      { label: 'Total c/ IVA', align: 'right' },
+      { key: 'ref', header: 'Referência', sortable: true },
+      { key: 'cliente', header: 'Cliente', sortable: true },
+      { key: 'validade', header: 'Validade', sortable: true },
+      { key: 'estado', header: 'Estado' },
+      { key: 'total', header: 'Total c/ IVA', align: 'end', sortable: true },
     ],
     rows: data.orcamentos
       .filter((o) => {
@@ -354,20 +323,21 @@ function buildOrcamentos(data: DataState, q: string, h: ListHandlers): ListModel
         const tone = toneOf(o.estado);
         return {
           id: o.id,
-          cells: [
-            cell(o.ref, { weight: 600, sub: o.obra }),
-            cell(cliente?.nome ?? '—', { color: 'var(--cp-text-muted)' }),
-            cell(ptDate(o.dataValidade), {
-              color: 'var(--cp-text-muted)',
+          cells: {
+            ref: cell(o.ref, { strong: true, sub: o.obra }),
+            cliente: cell(cliente?.nome ?? '—', { muted: true }),
+            validade: cell(ptDate(o.dataValidade), {
+              muted: true,
               sub: `emitido ${ptDate(o.dataEmissao)}`,
             }),
-            cell('', { badges: [{ text: o.estado, bg: tone.bg, fg: tone.fg }] }),
-            cell(eur(quoteGross(o)), {
-              align: 'right',
-              weight: 600,
+            estado: {
+              badges: [{ text: o.estado, status: tone.status, className: tone.className }],
+            },
+            total: cell(eur(quoteGross(o)), {
+              strong: true,
               sub: `${eur(quoteNet(o))} s/ IVA`,
             }),
-          ],
+          },
           onEdit: () => h.openQuote(o),
           onView: () =>
             h.showDetail({

@@ -1,17 +1,17 @@
 import { useEffect, useRef } from 'react';
+import { Button } from '@constructpluseu/react';
 
 interface ToolbarButton {
   label: string;
   title: string;
   command: string;
-  weight: number;
 }
 
 const TOOLBAR: ToolbarButton[] = [
-  { label: 'B', title: 'Negrito', command: 'bold', weight: 700 },
-  { label: 'I', title: 'Itálico', command: 'italic', weight: 400 },
-  { label: '• Lista', title: 'Lista com marcas', command: 'insertUnorderedList', weight: 500 },
-  { label: '1. Lista', title: 'Lista numerada', command: 'insertOrderedList', weight: 500 },
+  { label: 'B', title: 'Negrito', command: 'bold' },
+  { label: 'I', title: 'Itálico', command: 'italic' },
+  { label: '• Lista', title: 'Lista com marcas', command: 'insertUnorderedList' },
+  { label: '1. Lista', title: 'Lista numerada', command: 'insertOrderedList' },
 ];
 
 interface RichTextFieldProps {
@@ -24,9 +24,11 @@ interface RichTextFieldProps {
 /**
  * Minimal rich-text field for marcação notes.
  *
- * `document.execCommand` is deprecated but is still the only cross-browser way to
- * apply formatting to a `contenteditable` without pulling in an editor library.
- * Swap this component out if the notes ever need more than bold/italic/lists.
+ * The design system has no rich-text component, so this stays hand-built — but
+ * it is styled entirely with design-system tokens so it follows both themes.
+ *
+ * `document.execCommand` is deprecated but is still the only cross-browser way
+ * to apply formatting to a `contenteditable` without an editor library.
  */
 export function RichTextField({ label, value, onChange }: RichTextFieldProps) {
   const editorRef = useRef<HTMLDivElement>(null);
@@ -44,27 +46,14 @@ export function RichTextField({ label, value, onChange }: RichTextFieldProps) {
 
   return (
     <div>
-      <span className="cp-label">{label}</span>
-      <div
-        style={{
-          border: '1px solid var(--cp-border)',
-          borderRadius: 'var(--cp-radius)',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            gap: 4,
-            padding: 8,
-            borderBottom: '1px solid var(--cp-border)',
-            background: 'var(--cp-surface-alt)',
-          }}
-        >
+      <span className="cp-field-label">{label}</span>
+      <div className="cp-richtext">
+        <div className="cp-richtext__toolbar">
           {TOOLBAR.map((b) => (
-            <button
+            <Button
               key={b.command}
-              type="button"
+              variant="secondary"
+              size="sm"
               title={b.title}
               aria-label={b.title}
               // mousedown + preventDefault keeps the text selection while the command runs
@@ -72,22 +61,9 @@ export function RichTextField({ label, value, onChange }: RichTextFieldProps) {
                 e.preventDefault();
                 applyCommand(b.command);
               }}
-              style={{
-                minWidth: 32,
-                height: 32,
-                padding: '0 10px',
-                whiteSpace: 'nowrap',
-                border: '1px solid var(--cp-border)',
-                borderRadius: 'var(--cp-radius)',
-                background: 'var(--cp-surface)',
-                color: 'var(--cp-navy)',
-                fontSize: 13,
-                fontWeight: b.weight,
-                cursor: 'pointer',
-              }}
             >
               {b.label}
-            </button>
+            </Button>
           ))}
         </div>
 
@@ -98,15 +74,8 @@ export function RichTextField({ label, value, onChange }: RichTextFieldProps) {
           role="textbox"
           aria-multiline="true"
           aria-label={label}
+          className="cp-richtext__editor"
           onInput={(e) => onChange(e.currentTarget.innerHTML)}
-          style={{
-            minHeight: 120,
-            padding: '14px 16px',
-            fontSize: 14,
-            lineHeight: 1.6,
-            color: 'var(--cp-navy)',
-            background: 'var(--cp-surface)',
-          }}
         />
       </div>
     </div>

@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { Avatar, Button, Header, SideNav } from '@constructpluseu/react';
 import { NAV } from '../domain/navigation';
 import { COMPACT_BREAKPOINT, NARROW_BREAKPOINT, useViewportWidth } from '../hooks/useViewport';
+import { useTheme } from '../hooks/useTheme';
+import type { SideNavItem } from '@constructpluseu/react';
 import type { Route } from '../domain/types';
 
 export interface PrimaryAction {
@@ -20,6 +23,30 @@ interface AppShellProps {
   children: ReactNode;
 }
 
+/** Groups with a label become expandable parents; the unlabelled group is flattened. */
+const NAV_ITEMS: SideNavItem[] = NAV.flatMap((group): SideNavItem[] => {
+  const leaves = group.items.map((item) => ({
+    id: item.id,
+    label: item.label,
+    href: `#${item.id}`,
+  }));
+  if (!group.label) return leaves;
+  return [
+    {
+      id: `grupo-${group.label.toLowerCase()}`,
+      label: group.label,
+      href: `#${group.items[0].id}`,
+      children: leaves,
+    },
+  ];
+});
+
+const GROUP_OF: Record<string, string> = Object.fromEntries(
+  NAV.filter((g) => g.label).flatMap((g) =>
+    g.items.map((i) => [i.id, `grupo-${g.label.toLowerCase()}`]),
+  ),
+);
+
 export function AppShell({
   route,
   onNavigate,
@@ -34,254 +61,94 @@ export function AppShell({
   const width = useViewportWidth();
   const narrow = width < NARROW_BREAKPOINT;
   const compact = width < COMPACT_BREAKPOINT;
+  const { theme, toggle } = useTheme();
 
-  const [collapsed, setCollapsed] = useState(() => narrow);
+  const [navOpen, setNavOpen] = useState(!narrow);
   const wasNarrow = useRef(narrow);
 
   // Entering the narrow breakpoint turns the sidebar into a closed drawer.
   useEffect(() => {
-    if (narrow && !wasNarrow.current) setCollapsed(true);
+    if (narrow && !wasNarrow.current) setNavOpen(false);
     wasNarrow.current = narrow;
   }, [narrow]);
 
-  function navigate(next: Route) {
-    onNavigate(next);
-    if (narrow) setCollapsed(true);
+  const activeId = route === 'orcamento-edit' ? 'orcamentos' : route;
+  const [expandedIds, setExpandedIds] = useState<string[]>(() =>
+    GROUP_OF[activeId] ? [GROUP_OF[activeId]] : [],
+  );
+
+  // Keep the group containing the active route open.
+  useEffect(() => {
+    const group = GROUP_OF[activeId];
+    if (group) setExpandedIds((ids) => (ids.includes(group) ? ids : [...ids, group]));
+  }, [activeId]);
+
+  /**
+   * `SideNav` is link-driven and exposes no `onSelect`, so navigation is caught
+   * here from the anchor it renders. Switching the app to real Next routes
+   * (`/agenda`, `/catalogo`, …) would remove this adapter — see
+   * docs/migracao-design-system.md.
+   */
+  function interceptNavClick(event: MouseEvent<HTMLDivElement>) {
+    const anchor = (event.target as HTMLElement).closest('a[href^="#"]');
+    if (!anchor) return;
+    const id = anchor.getAttribute('href')?.slice(1);
+    if (!id) return;
+    event.preventDefault();
+    onNavigate(id as Route);
+    if (narrow) setNavOpen(false);
   }
 
-  const showAside = !(narrow && collapsed);
-
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--cp-canvas)' }}>
-      <header
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
-          height: 'var(--cp-header-h)',
-          background: 'var(--cp-navy)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 20px',
-          gap: 16,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
-          <button
-            type="button"
-            onClick={() => setCollapsed((c) => !c)}
-            aria-label="Alternar menu"
-            aria-expanded={!collapsed}
-            style={{
-              width: 36,
-              height: 36,
-              flex: 'none',
-              border: 'none',
-              borderRadius: 'var(--cp-radius)',
-              background: 'rgba(255,255,255,0.08)',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 3,
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.16)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.08)';
-            }}
+    <div className="cp-app">
+      <Header brand="Construct+" navOpen={navOpen} onMenuToggle={() => setNavOpen((o) => !o)}>
+        <div className="cp-app__header-actions">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggle}
+            aria-label={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
           >
-            {[0, 1, 2].map((i) => (
-              <span
-                key={i}
-                aria-hidden
-                style={{ width: 15, height: 2, background: '#fff', borderRadius: 'var(--cp-radius)' }}
-              />
-            ))}
-          </button>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
-            <div
-              aria-hidden
-              style={{
-                width: 26,
-                height: 26,
-                flex: 'none',
-                borderRadius: 'var(--cp-radius)',
-                background: 'var(--cp-accent)',
-              }}
-            />
-            <span style={{ fontSize: 17, fontWeight: 700, color: '#fff', whiteSpace: 'nowrap' }}>
-              Construct<span style={{ color: 'var(--cp-accent)' }}>+</span>
-            </span>
-          </div>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 'none' }}>
+            {theme === 'dark' ? 'Claro' : 'Escuro'}
+          </Button>
           {!compact && (
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'flex-end',
-                lineHeight: 1.3,
-              }}
-            >
-              <span style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{user.name}</span>
-              <span style={{ fontSize: 11, color: 'var(--cp-text-faint)' }}>{user.role}</span>
-            </div>
+            <span className="cp-app__user">
+              <strong>{user.name}</strong>
+              <small>{user.role}</small>
+            </span>
           )}
-          <div
-            aria-hidden
-            style={{
-              width: 34,
-              height: 34,
-              borderRadius: '50%',
-              background: 'var(--cp-navy-light)',
-              color: '#fff',
-              fontSize: 13,
-              fontWeight: 600,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {user.initials}
-          </div>
+          <Avatar name={user.name} size="sm" />
+          <Button variant="ghost" size="sm" onClick={onLogout}>
+            Terminar sessão
+          </Button>
         </div>
-      </header>
+      </Header>
 
-      <div style={{ display: 'flex', alignItems: 'flex-start', position: 'relative' }}>
-        {narrow && !collapsed && (
-          <div
-            className="cp-anim-fade-in"
-            onClick={() => setCollapsed(true)}
-            style={{
-              position: 'fixed',
-              inset: 'var(--cp-header-h) 0 0 0',
-              background: 'var(--cp-scrim)',
-              zIndex: 30,
-            }}
+      <div className="cp-app__body">
+        {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        <div className="cp-app__nav" onClick={interceptNavClick}>
+          <SideNav
+            label="Navegação principal"
+            items={NAV_ITEMS}
+            activeId={activeId}
+            expandedIds={expandedIds}
+            onExpandedChange={setExpandedIds}
+            open={navOpen}
           />
-        )}
+        </div>
 
-        {showAside && (
-          <aside
-            className={collapsed ? 'cp-aside cp-aside--collapsed' : 'cp-aside'}
-            aria-label="Navegação principal"
-            style={{
-              position: narrow ? 'fixed' : 'sticky',
-              top: 'var(--cp-header-h)',
-              left: 0,
-              zIndex: 31,
-              width: collapsed ? 'var(--cp-aside-w-collapsed)' : 'var(--cp-aside-w)',
-              flex: 'none',
-              height: 'calc(100vh - var(--cp-header-h))',
-              background: 'var(--cp-surface)',
-              borderRight: '1px solid var(--cp-border)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              overflowY: 'auto',
-              transition: 'width .18s ease',
-            }}
-          >
-            <nav
-              style={{
-                padding: '16px 12px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 20,
-              }}
-            >
-              {NAV.map((group, gi) => (
-                <div
-                  key={group.label || `group-${gi}`}
-                  style={{ display: 'flex', flexDirection: 'column', gap: 4 }}
-                >
-                  {group.label && !collapsed && (
-                    <p className="cp-nav-group-label">{group.label}</p>
-                  )}
-                  {group.items.map((item) => {
-                    const active =
-                      route === item.id ||
-                      (route === 'orcamento-edit' && item.id === 'orcamentos');
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        className={active ? 'cp-nav-item is-active' : 'cp-nav-item'}
-                        onClick={() => navigate(item.id)}
-                        title={item.label}
-                        aria-current={active ? 'page' : undefined}
-                      >
-                        <span className="cp-nav-item__chip">{item.abbr}</span>
-                        <span className="cp-nav-item__label">{item.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
-            </nav>
-
-            <div style={{ padding: 12, borderTop: '1px solid var(--cp-border)' }}>
-              <button
-                type="button"
-                className="cp-nav-item cp-nav-item--danger"
-                onClick={onLogout}
-              >
-                <span className="cp-nav-item__chip">SA</span>
-                <span className="cp-nav-item__label">Terminar sessão</span>
-              </button>
-            </div>
-          </aside>
-        )}
-
-        <main style={{ flex: 1, minWidth: 0, padding: compact ? 16 : 32 }}>
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 16,
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              marginBottom: 24,
-            }}
-          >
-            <div style={{ minWidth: 0 }}>
-              <p
-                className="cp-eyebrow"
-                style={{ letterSpacing: '0.06em', marginBottom: 6, fontWeight: 500, fontSize: 12 }}
-              >
-                {breadcrumb}
-              </p>
-              <h1 className="cp-page-title">{title}</h1>
-              <p
-                style={{
-                  fontSize: 14,
-                  lineHeight: 1.5,
-                  color: 'var(--cp-text-muted)',
-                  marginTop: 8,
-                  maxWidth: '62ch',
-                  textWrap: 'pretty',
-                }}
-              >
-                {subtitle}
-              </p>
+        <main className="cp-app__main">
+          <div className="cp-page-header">
+            <div className="cp-page-header__text">
+              <p className="cp-eyebrow">{breadcrumb}</p>
+              <h1 className="cp-heading-lg">{title}</h1>
+              <p className="cp-body cp-muted cp-measure">{subtitle}</p>
             </div>
 
             {primaryAction && (
-              <button
-                type="button"
-                className="cp-btn cp-btn--accent cp-btn--glow"
-                style={{ flex: 'none' }}
-                onClick={primaryAction.onClick}
-              >
+              <Button variant="accent" onClick={primaryAction.onClick}>
                 {primaryAction.label}
-              </button>
+              </Button>
             )}
           </div>
 
