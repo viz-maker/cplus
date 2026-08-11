@@ -7,9 +7,13 @@ export { ESTADOS };
 /**
  * The design system's `Tag` offers five statuses; the domain has six estados.
  * "Em curso" and "Em revisão" would both collapse onto `info`, so "Em curso"
- * carries an extra class that repaints it with the brand accent tokens — see
- * `.cp-tone-brand` in global.css. Everything stays on design-system tokens, so
- * both themes still work.
+ * carries an extra class that repaints it as a filled brand chip — see
+ * `.cp-tone-brand` in global.css.
+ *
+ * The brand pair is used rather than the accent one because `bg-accent-subtle`
+ * is the same value as `status-success-bg`, which would have made "Em curso"
+ * indistinguishable from "Concluído". Filled-vs-subtle also separates it from
+ * the other five at a glance.
  */
 export interface Tone {
   status: TagStatus;
@@ -48,9 +52,9 @@ export const STATUS_VARS: Record<Estado, ToneVars> = {
   Adiado: vars('warning'),
   'Em revisão': vars('info'),
   'Em curso': {
-    bg: 'var(--cp-color-semantic-bg-accent-subtle)',
-    fg: 'var(--cp-color-semantic-accent-default)',
-    border: 'var(--cp-color-semantic-accent-default)',
+    bg: 'var(--cp-color-semantic-bg-brand)',
+    fg: 'var(--cp-color-semantic-text-on-brand)',
+    border: 'var(--cp-color-semantic-bg-brand)',
   },
   Concluído: vars('success'),
   Cancelado: vars('danger'),

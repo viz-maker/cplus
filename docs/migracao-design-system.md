@@ -71,9 +71,26 @@ Os campos dentro deles são componentes do DS.
 ### Perda de fidelidade assumida
 
 O `Tag` do DS tem cinco estados; o domínio tem seis. **"Em curso"** renderiza
-como `info` mais a classe `.cp-tone-brand`, que o repinta com os tokens de
-acento para não ficar igual a "Em revisão". Ver
+como `info` mais a classe `.cp-tone-brand`, que o repinta como chip cheio com o
+par `bg-brand` / `text-on-brand`. Usa-se o par **brand** e não o **accent**
+porque `bg-accent-subtle` tem exatamente o mesmo valor que `status-success-bg`,
+o que tornaria "Em curso" indistinguível de "Concluído". Ver
 [status.ts](../src/domain/status.ts).
+
+### ⚠️ Token inexistente no design system 1.0.0
+
+`--cp-color-semantic-accent-default` (e `-hover`) **são referenciados pelo CSS
+dos próprios componentes do DS mas nunca declarados** em `tokens.css`. Um
+`var()` para um token inexistente não dá erro: a declaração é descartada e a
+propriedade herda. Isto chegou a produção uma vez, com os eventos "Em curso" a
+ficarem visualmente iguais aos "Concluído".
+
+Vale a pena reportar à equipa do design system — as regras afetadas no pacote
+são `color`, `background-color`, `border-color` e um `box-shadow` de foco.
+
+Para não voltar a acontecer, `npm run build` corre primeiro
+[scripts/audit-tokens.mjs](../scripts/audit-tokens.mjs), que falha se o código
+referenciar um token que o DS não declara.
 
 ## 4. Dívida conhecida
 

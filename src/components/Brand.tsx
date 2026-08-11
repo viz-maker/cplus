@@ -8,7 +8,7 @@ interface BrandProps {
 export function Brand({ tone, tile = 34, fontSize = 20 }: BrandProps) {
   const onDark = tone === 'onDark';
   return (
-    <div className="cp-brand">
+    <div className={onDark ? 'cp-brand cp-brand--on-dark' : 'cp-brand cp-brand--on-light'}>
       <div
         aria-hidden
         className="cp-brand__tile"

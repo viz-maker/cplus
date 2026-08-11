@@ -212,8 +212,16 @@ dd {
   white-space: nowrap;
 }
 
+/*
+ * In dark mode `bg-brand` resolves to mint, so an accent-coloured "+" would
+ * vanish against the brand panel. There it simply matches the wordmark.
+ */
 .cp-brand__plus {
-  color: var(--cp-color-semantic-accent-default);
+  color: var(--cp-color-semantic-bg-accent);
+}
+
+[data-theme='dark'] .cp-brand--on-dark .cp-brand__plus {
+  color: inherit;
 }
 
 /* ------------------------------------------------------------------- modal */
@@ -457,12 +465,12 @@ dd {
 
 /*
  * "Em curso" has no slot in the design system's five Tag statuses — it is
- * rendered as `info` and repainted here with the brand accent so it stays
- * distinct from "Em revisão". See domain/status.ts.
+ * rendered as `info` and repainted here as a filled brand chip so it stays
+ * distinct from both "Em revisão" and "Concluído". See domain/status.ts.
  */
 .cp-tone-brand {
-  background: var(--cp-color-semantic-bg-accent-subtle) !important;
-  color: var(--cp-color-semantic-accent-default) !important;
+  background: var(--cp-color-semantic-bg-brand) !important;
+  color: var(--cp-color-semantic-text-on-brand) !important;
 }
 
 /* ---------------------------------------------------------------- calendar */
@@ -513,7 +521,7 @@ dd {
 }
 
 .cp-cal-daynum.is-today {
-  color: var(--cp-color-semantic-accent-default);
+  color: var(--cp-color-semantic-text-success);
 }
 
 .cp-cal-row {
@@ -676,7 +684,7 @@ dd {
 .cp-cal-minimonth__count {
   font-size: var(--cp-font-size-xs);
   font-weight: var(--cp-font-weight-medium);
-  color: var(--cp-color-semantic-accent-default);
+  color: var(--cp-color-semantic-text-success);
 }
 
 .cp-cal-minimonth__grid {
@@ -697,7 +705,7 @@ dd {
 
 .cp-cal-minicell.is-busy {
   background: var(--cp-color-semantic-bg-accent-subtle);
-  color: var(--cp-color-semantic-accent-default);
+  color: var(--cp-color-semantic-text-success);
 }
 
 /* ------------------------------------------------------------ quote editor */
@@ -760,7 +768,7 @@ dd {
 .cp-quote-total-grand p:last-child {
   font-size: var(--cp-font-size-2xl);
   font-weight: var(--cp-font-weight-bold);
-  color: var(--cp-color-semantic-accent-default);
+  color: var(--cp-color-semantic-text-success);
   letter-spacing: var(--cp-font-letter-spacing-tight);
 }
 
