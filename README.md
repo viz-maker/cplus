@@ -14,6 +14,28 @@ Implementação do design importado de
 
 ## Arrancar
 
+### Pré-requisito: acesso ao GitHub Packages
+
+Os componentes `@constructpluseu/*` estão publicados num registo privado. O
+[.npmrc](.npmrc) do projeto já aponta para lá e lê o token de uma variável de
+ambiente — o token **nunca** é escrito em ficheiro.
+
+Gerar um token clássico com o scope `read:packages` e defini-lo uma vez por
+máquina:
+
+```bash
+setx GITHUB_TOKEN "ghp_xxxxxxxxxxxxxxxxxxxx"
+```
+
+Na **Vercel**, adicionar `GITHUB_TOKEN` às variáveis de ambiente do projeto —
+sem isso o `npm install` do build falha com `401 Unauthorized`.
+
+> Sem `GITHUB_TOKEN` definido, o `.npmrc` não impede o `npm install` das
+> restantes dependências — o npm só tenta autenticar quando há mesmo um pacote
+> `@constructpluseu/*` na árvore, e aí falha com `401`.
+
+### Instalar e correr
+
 ```bash
 npm install
 ```
@@ -191,8 +213,14 @@ src/
 
 ## Design system
 
-Cores, tipografia, espaçamento, cantos e elevação em
-[tokens.css](src/styles/tokens.css); classes de componente em
+> **Estado: migração pendente.** A camada de apresentação atual é própria deste
+> repositório. A biblioteca oficial (`@constructpluseu/react`, documentada em
+> <https://constructplus.eu/DS/>) passa a ser a fonte dos componentes — ver
+> [docs/migracao-design-system.md](docs/migracao-design-system.md) para o
+> mapeamento componente a componente e o que fica à mão.
+
+Enquanto a migração não acontece: cores, tipografia, espaçamento, cantos e
+elevação em [tokens.css](src/styles/tokens.css); classes de componente em
 [global.css](src/styles/global.css). Estilos `inline` só para valores dinâmicos.
 
 Duas divergências deliberadas face às fontes de design:
