@@ -1,0 +1,20 @@
+node_modules
+.next
+out
+build
+*.tsbuildinfo
+next-env.d.ts
+
+# Local env files
+.env
+.env*.local
+
+# Vercel
+.vercel
+
+# Editor / OS
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+Thumbs.db

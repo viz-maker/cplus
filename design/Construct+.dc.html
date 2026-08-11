@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:#F7F9FC;font-family:Inter,'Segoe UI',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:#2BAA74;text-decoration:none}
+  a:hover{color:#0D2137;text-decoration:underline}
+  input,select,textarea,button{font-family:inherit}
+  input:focus,select:focus,textarea:focus,[contenteditable]:focus{outline:2px solid #3EC98E;outline-offset:1px}
+  ::placeholder{color:#94A3B8}
+  @keyframes cpFadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes cpFadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes cpSlideIn{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<sc-if value="{{ isLogin }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh;display:flex;background:#0D2137">
+  <div style="flex:1;min-width:0;display:{{ brandDisplay }};padding:64px;flex-direction:column;justify-content:space-between;background:#0D2137" data-screen-label="Login — painel de marca">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div style="width:34px;height:34px;border-radius:5px;background:#3EC98E"></div>
+      <span style="font:700 20px Inter;color:#fff;letter-spacing:-.01em">Construct<span style="color:#3EC98E">+</span></span>
+    </div>
+    <div style="max-width:420px;display:flex;flex-direction:column;gap:20px">
+      <h1 style="font:700 36px/1.15 Inter;color:#fff;margin:0;letter-spacing:-.02em">Gestão de obra, do orçamento à faturação.</h1>
+      <p style="font:400 16px/1.5 Inter;color:#94A3B8;margin:0">Agenda, aprovisionamento e orçamentos numa única plataforma para equipas de construção e reabilitação.</p>
+    </div>
+    <p style="font:400 12px Inter;color:#475569;margin:0">Construct Plus, Lda · Aveiro, Portugal</p>
+  </div>
+  <div style="width:100%;max-width:560px;background:#F7F9FC;display:flex;align-items:center;justify-content:center;padding:24px">
+    <form onSubmit="{{ onLogin }}" style="width:100%;max-width:400px;display:flex;flex-direction:column;gap:24px;animation:cpFadeUp .4s ease both">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;border-radius:5px;background:#0D2137;display:flex;align-items:center;justify-content:center">
+          <div style="width:12px;height:12px;border-radius:5px;background:#3EC98E"></div>
+        </div>
+        <span style="font:700 20px Inter;color:#0D2137;letter-spacing:-.01em">Construct<span style="color:#3EC98E">+</span></span>
+      </div>
+      <div>
+        <h2 style="font:700 24px/1.2 Inter;color:#0D2137;margin:0 0 6px">Entrar na conta</h2>
+        <p style="font:400 14px/1.5 Inter;color:#475569;margin:0">Introduza as credenciais da sua organização.</p>
+      </div>
+      <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:5px;background:rgba(220,38,38,0.12);border:1px solid #F87171;animation:cpFadeIn .2s ease both">
+          <div style="width:8px;height:8px;border-radius:50%;background:#B91C1C;margin-top:6px;flex:none"></div>
+          <div>
+            <p style="font:600 14px Inter;color:#B91C1C;margin:0">{{ loginError }}</p>
+            <p style="font:400 12px/1.4 Inter;color:#B91C1C;margin:4px 0 0;opacity:.85">Verifique o email e a palavra-passe e tente novamente.</p>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div>
+          <label for="cp-email" style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Email</label>
+          <input id="cp-email" type="email" data-field="email" value="{{ loginEmail }}" onChange="{{ onLoginField }}" placeholder="nome@empresa.pt" style="width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+            <label for="cp-pass" style="font:500 12px Inter;color:#475569">Palavra-passe</label>
+            <button type="button" onClick="{{ onGoRecover }}" style="border-radius:5px;background:none;border:none;padding:0;font:500 12px Inter;color:#2BAA74;cursor:pointer;text-decoration:underline">Esqueceu-se da palavra-passe?</button>
+          </div>
+          <input id="cp-pass" type="password" data-field="password" value="{{ loginPass }}" onChange="{{ onLoginField }}" placeholder="••••••••" style="width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+        </div>
+      </div>
+      <button type="submit" style="padding:13px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 15px Inter;cursor:pointer;box-shadow:0 8px 32px rgba(62,201,142,0.25)" style-hover="background:#4DD29A" style-active="background:#2BAA74">Iniciar sessão</button>
+      <p style="font:400 12px/1.5 Inter;color:#94A3B8;margin:0;padding:12px 14px;background:#F0F4F8;border-radius:5px;border:1px solid #E2E8F0">Demo: <strong style="color:#475569">{{ demoEmailShown }}</strong> · palavra-passe <strong style="color:#475569">construct</strong></p>
+    </form>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRecover }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#F7F9FC;padding:24px" data-screen-label="Recuperação de palavra-passe">
+  <div style="width:100%;max-width:440px;background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);padding:32px;animation:cpFadeUp .35s ease both">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <div style="width:34px;height:34px;border-radius:5px;background:#0D2137;display:flex;align-items:center;justify-content:center">
+        <div style="width:12px;height:12px;border-radius:5px;background:#3EC98E"></div>
+      </div>
+      <span style="font:700 20px Inter;color:#0D2137">Construct<span style="color:#3EC98E">+</span></span>
+    </div>
+    <sc-if value="{{ recIdle }}" hint-placeholder-val="{{ true }}">
+      <form onSubmit="{{ onRecSubmit }}" style="display:flex;flex-direction:column;gap:24px">
+        <div>
+          <h2 style="font:700 24px/1.2 Inter;color:#0D2137;margin:0 0 6px">Recuperar acesso</h2>
+          <p style="font:400 14px/1.5 Inter;color:#475569;margin:0">Indique o email da conta. Enviaremos uma ligação para definir uma nova palavra-passe.</p>
+        </div>
+        <div>
+          <label for="cp-rec" style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Email da conta</label>
+          <input id="cp-rec" type="email" value="{{ recEmail }}" onChange="{{ onRecField }}" placeholder="nome@empresa.pt" style="width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+        </div>
+        <div style="display:flex;gap:12px">
+          <button type="button" onClick="{{ onBackLogin }}" style="flex:none;padding:12px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Voltar</button>
+          <button type="submit" style="flex:1;padding:12px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer" style-hover="background:#4DD29A">Enviar ligação</button>
+        </div>
+      </form>
+    </sc-if>
+    <sc-if value="{{ recSent }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;flex-direction:column;gap:24px;animation:cpFadeIn .3s ease both">
+        <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:5px;background:rgba(62,201,142,0.12);border:1px solid #5DDBA2">
+          <div style="width:8px;height:8px;border-radius:50%;background:#2BAA74;margin-top:7px;flex:none"></div>
+          <p style="font:500 14px/1.5 Inter;color:#2BAA74;margin:0">Se este email estiver registado, foi enviada uma ligação de recuperação de palavra-passe.</p>
+        </div>
+        <p style="font:400 14px/1.5 Inter;color:#475569;margin:0">Verifique também a pasta de spam. A ligação expira em 30 minutos.</p>
+        <div>
+          <div style="display:flex;justify-content:space-between;font:500 12px Inter;color:#475569;margin-bottom:8px">
+            <span>A regressar ao início de sessão</span>
+            <span style="color:#0D2137">{{ recCountdown }} s</span>
+          </div>
+          <div style="height:6px;border-radius:999px;background:#E2E8F0;overflow:hidden">
+            <div style="height:100%;background:#3EC98E;border-radius:999px;transition:width 1s linear;width:{{ recProgress }}%"></div>
+          </div>
+        </div>
+        <button type="button" onClick="{{ onBackLogin }}" style="padding:12px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Voltar ao início de sessão</button>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh;background:#F7F9FC">
+  <header style="position:sticky;top:0;z-index:40;height:60px;background:#0D2137;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:16px">
+    <div style="display:flex;align-items:center;gap:14px;min-width:0">
+      <button type="button" onClick="{{ onToggleSidebar }}" aria-label="Alternar menu" style="width:36px;height:36px;border:none;border-radius:5px;background:rgba(255,255,255,0.08);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:none" style-hover="background:rgba(255,255,255,0.16)">
+        <div style="width:15px;height:2px;background:#fff;border-radius:5px"></div>
+        <div style="width:15px;height:2px;background:#fff;border-radius:5px"></div>
+        <div style="width:15px;height:2px;background:#fff;border-radius:5px"></div>
+      </button>
+      <div style="display:flex;align-items:center;gap:10px;min-width:0">
+        <div style="width:26px;height:26px;border-radius:5px;background:#3EC98E;flex:none"></div>
+        <span style="font:700 17px Inter;color:#fff;white-space:nowrap">Construct<span style="color:#3EC98E">+</span></span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;flex:none">
+      <div style="display:{{ metaDisplay }};flex-direction:column;align-items:flex-end;line-height:1.3">
+        <span style="font:500 13px Inter;color:#fff">{{ userName }}</span>
+        <span style="font:400 11px Inter;color:#94A3B8">{{ userRole }}</span>
+      </div>
+      <div style="width:34px;height:34px;border-radius:50%;background:#2C4A6E;color:#fff;font:600 13px Inter;display:flex;align-items:center;justify-content:center">{{ userInitials }}</div>
+    </div>
+  </header>
+
+  <div style="display:flex;align-items:flex-start;position:relative">
+    <sc-if value="{{ showScrim }}" hint-placeholder-val="{{ false }}">
+      <div onClick="{{ onToggleSidebar }}" style="position:fixed;inset:60px 0 0 0;background:rgba(13,33,55,0.45);z-index:30;animation:cpFadeIn .2s ease both"></div>
+    </sc-if>
+    <aside style="position:{{ asidePos }};top:60px;left:0;z-index:31;width:{{ asideW }};flex:none;height:calc(100vh - 60px);background:#fff;border-right:1px solid #E2E8F0;display:{{ asideDisplay }};flex-direction:column;justify-content:space-between;overflow-y:auto;transition:width .18s ease">
+      <nav style="padding:16px 12px;display:flex;flex-direction:column;gap:20px">
+        <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="3">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <sc-if value="{{ g.showLabel }}" hint-placeholder-val="{{ true }}">
+              <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 4px;padding:0 12px">{{ g.label }}</p>
+            </sc-if>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+              <button type="button" onClick="{{ it.onClick }}" title="{{ it.label }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:none;border-radius:5px;cursor:pointer;text-align:left;background:{{ it.bg }};color:{{ it.fg }};font:{{ it.font }} 14px Inter;justify-content:{{ it.justify }}" style-hover="background:#F0F4F8">
+                <span style="width:26px;height:26px;border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;font:600 10px Inter;letter-spacing:.02em;background:{{ it.chipBg }};color:{{ it.chipFg }}">{{ it.abbr }}</span>
+                <span style="display:{{ labelDisplay }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ it.label }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-for>
+      </nav>
+      <div style="padding:12px;border-top:1px solid #E2E8F0">
+        <button type="button" onClick="{{ onLogout }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:none;border-radius:5px;background:none;cursor:pointer;color:#B91C1C;font:500 14px Inter;text-align:left;justify-content:{{ logoutJustify }}" style-hover="background:rgba(220,38,38,0.08)">
+          <span style="width:26px;height:26px;border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;background:rgba(220,38,38,0.10);color:#B91C1C;font:600 10px Inter">SA</span>
+          <span style="display:{{ labelDisplay }};white-space:nowrap">Terminar sessão</span>
+        </button>
+      </div>
+    </aside>
+
+    <main style="flex:1;min-width:0;padding:{{ mainPad }}">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:24px">
+        <div style="min-width:0">
+          <p style="font:500 12px Inter;color:#94A3B8;letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px">{{ breadcrumb }}</p>
+          <h1 style="font:700 30px/1.2 Inter;color:#0D2137;margin:0;letter-spacing:-.02em">{{ pageTitle }}</h1>
+          <p style="font:400 14px/1.5 Inter;color:#475569;margin:8px 0 0;max-width:62ch;text-wrap:pretty">{{ pageSubtitle }}</p>
+        </div>
+        <sc-if value="{{ hasPrimaryAction }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ onPrimaryAction }}" style="flex:none;padding:12px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer;box-shadow:0 8px 32px rgba(62,201,142,0.25)" style-hover="background:#4DD29A" style-active="background:#2BAA74">{{ primaryActionLabel }}</button>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ isAgenda }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="Agenda" style="background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 2px 12px rgba(13,33,55,0.08);overflow:hidden">
+          <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0">
+            <div style="display:flex;align-items:center;gap:8px">
+              <button type="button" onClick="{{ onPrev }}" aria-label="Período anterior" style="width:36px;height:36px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#0D2137;font:600 16px Inter;cursor:pointer;line-height:1" style-hover="background:#F0F4F8">‹</button>
+              <button type="button" onClick="{{ onNext }}" aria-label="Período seguinte" style="width:36px;height:36px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#0D2137;font:600 16px Inter;cursor:pointer;line-height:1" style-hover="background:#F0F4F8">›</button>
+              <button type="button" onClick="{{ onToday }}" style="padding:8px 16px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#0D2137;font:500 13px Inter;cursor:pointer" style-hover="background:#F0F4F8">Hoje</button>
+              <p style="font:600 16px Inter;color:#0D2137;margin:0 0 0 8px">{{ rangeLabel }}</p>
+            </div>
+            <div style="display:flex;gap:4px;padding:4px;background:#F0F4F8;border-radius:5px">
+              <sc-for list="{{ modes }}" as="m" hint-placeholder-count="4">
+                <button type="button" onClick="{{ m.onClick }}" style="padding:8px 16px;border:none;border-radius:5px;cursor:pointer;font:{{ m.font }} 13px Inter;background:{{ m.bg }};color:{{ m.fg }};box-shadow:{{ m.shadow }}">{{ m.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+
+          <sc-if value="{{ showTimeGrid }}" hint-placeholder-val="{{ true }}">
+            <div style="overflow-x:auto">
+              <div style="min-width:{{ gridMinW }}">
+                <div style="display:grid;grid-template-columns:64px repeat({{ gridCols }},minmax(0,1fr));border-bottom:1px solid #E2E8F0;position:sticky;top:0;background:#fff;z-index:2">
+                  <div></div>
+                  <sc-for list="{{ calCols }}" as="c" hint-placeholder-count="7">
+                    <div style="padding:12px 8px;text-align:center;border-left:1px solid #EEF2F7">
+                      <p style="font:500 11px Inter;color:#94A3B8;margin:0;text-transform:uppercase;letter-spacing:.06em">{{ c.dow }}</p>
+                      <p style="font:600 18px Inter;margin:4px 0 0;color:{{ c.fg }}">{{ c.day }}</p>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ calRows }}" as="r" hint-placeholder-count="10">
+                  <div style="display:grid;grid-template-columns:64px repeat({{ gridCols }},minmax(0,1fr));border-bottom:1px solid #EEF2F7">
+                    <div style="padding:8px;text-align:right;font:400 11px Inter;color:#94A3B8">{{ r.label }}</div>
+                    <sc-for list="{{ r.cells }}" as="cell" hint-placeholder-count="7">
+                      <div onClick="{{ cell.onClick }}" title="Criar marcação" style="min-height:56px;border-left:1px solid #EEF2F7;padding:4px;cursor:pointer;display:flex;flex-direction:column;gap:3px;background:{{ cell.bg }}" style-hover="background:#F0F4F8">
+                        <sc-for list="{{ cell.events }}" as="ev" hint-placeholder-count="0">
+                          <div onClick="{{ ev.onClick }}" style="padding:6px 8px;border-radius:5px;background:{{ ev.bg }};border-left:3px solid {{ ev.fg }};cursor:pointer;overflow:hidden">
+                            <p style="font:600 11px Inter;color:{{ ev.fg }};margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ev.title }}</p>
+                            <p style="font:400 10px Inter;color:#475569;margin:2px 0 0">{{ ev.time }}</p>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showMonth }}" hint-placeholder-val="{{ false }}">
+            <div style="overflow-x:auto">
+              <div style="min-width:700px">
+                <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-bottom:1px solid #E2E8F0">
+                  <sc-for list="{{ dows }}" as="d" hint-placeholder-count="7">
+                    <div style="padding:10px;text-align:center;font:500 11px Inter;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em">{{ d }}</div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ monthWeeks }}" as="w" hint-placeholder-count="6">
+                  <div style="display:grid;grid-template-columns:repeat(7,minmax(0,1fr))">
+                    <sc-for list="{{ w.days }}" as="d" hint-placeholder-count="7">
+                      <div onClick="{{ d.onClick }}" style="min-height:112px;border-top:1px solid #EEF2F7;border-left:1px solid #EEF2F7;padding:8px;cursor:pointer;background:{{ d.bg }};display:flex;flex-direction:column;gap:4px" style-hover="background:#F0F4F8">
+                        <span style="font:600 13px Inter;color:{{ d.fg }};align-self:flex-start;padding:2px 7px;border-radius:999px;background:{{ d.numBg }}">{{ d.num }}</span>
+                        <sc-for list="{{ d.events }}" as="ev" hint-placeholder-count="0">
+                          <div onClick="{{ ev.onClick }}" style="padding:3px 7px;border-radius:5px;background:{{ ev.bg }};overflow:hidden">
+                            <p style="font:500 11px Inter;color:{{ ev.fg }};margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ev.time }} {{ ev.title }}</p>
+                          </div>
+                        </sc-for>
+                        <sc-if value="{{ d.more }}" hint-placeholder-val="{{ false }}">
+                          <p style="font:500 10px Inter;color:#94A3B8;margin:0">{{ d.more }}</p>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ showYear }}" hint-placeholder-val="{{ false }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px;padding:20px">
+              <sc-for list="{{ yearMonths }}" as="m" hint-placeholder-count="12">
+                <div onClick="{{ m.onClick }}" style="border:1px solid #E2E8F0;border-radius:5px;padding:12px;cursor:pointer;background:#fff" style-hover="background:#F0F4F8">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+                    <p style="font:600 13px Inter;color:#0D2137;margin:0;text-transform:capitalize">{{ m.name }}</p>
+                    <span style="font:500 11px Inter;color:#2BAA74">{{ m.countLabel }}</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">
+                    <sc-for list="{{ m.cells }}" as="c" hint-placeholder-count="35">
+                      <div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font:400 10px Inter;border-radius:5px;background:{{ c.bg }};color:{{ c.fg }}">{{ c.num }}</div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isList }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="Listagem" style="background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 2px 12px rgba(13,33,55,0.08);overflow:hidden">
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0">
+            <div style="position:relative;flex:1;min-width:220px;max-width:380px">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:12px;height:12px;border:2px solid #94A3B8;border-radius:50%"></span>
+              <input type="search" value="{{ search }}" onChange="{{ onSearch }}" placeholder="{{ searchPlaceholder }}" style="width:100%;padding:10px 16px 10px 38px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <p style="font:400 13px Inter;color:#475569;margin:0">{{ resultCount }}</p>
+          </div>
+          <div style="overflow-x:auto">
+            <table style="width:100%;border-collapse:collapse;min-width:640px">
+              <thead>
+                <tr style="background:#F0F4F8">
+                  <sc-for list="{{ columns }}" as="col" hint-placeholder-count="4">
+                    <th style="padding:12px 16px;text-align:{{ col.align }};font:600 12px Inter;color:#475569;letter-spacing:.02em;white-space:nowrap">{{ col.label }}</th>
+                  </sc-for>
+                  <th style="padding:12px 16px;text-align:right;font:600 12px Inter;color:#475569;white-space:nowrap">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                <sc-for list="{{ rows }}" as="row" hint-placeholder-count="6">
+                  <tr style="border-top:1px solid #EEF2F7" style-hover="background:#F7F9FC">
+                    <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="4">
+                      <td style="padding:14px 16px;vertical-align:middle;text-align:{{ cell.align }}">
+                        <sc-if value="{{ cell.text }}" hint-placeholder-val="{{ true }}">
+                          <p style="font:{{ cell.font }} 14px Inter;color:{{ cell.fg }};margin:0">{{ cell.text }}</p>
+                        </sc-if>
+                        <sc-if value="{{ cell.sub }}" hint-placeholder-val="{{ false }}">
+                          <p style="font:400 12px Inter;color:#94A3B8;margin:3px 0 0">{{ cell.sub }}</p>
+                        </sc-if>
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:{{ cell.justify }}">
+                          <sc-for list="{{ cell.badges }}" as="b" hint-placeholder-count="0">
+                            <span style="display:inline-block;padding:4px 10px;border-radius:999px;font:500 12px Inter;background:{{ b.bg }};color:{{ b.fg }};white-space:nowrap">{{ b.text }}</span>
+                          </sc-for>
+                        </div>
+                      </td>
+                    </sc-for>
+                    <td style="padding:14px 16px;text-align:right;white-space:nowrap">
+                      <div style="display:inline-flex;gap:8px">
+                        <button type="button" onClick="{{ row.onView }}" style="padding:7px 14px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#0D2137;font:500 13px Inter;cursor:pointer" style-hover="background:#F0F4F8">Detalhes</button>
+                        <button type="button" onClick="{{ row.onEdit }}" style="padding:7px 14px;border:1px solid #CBD5E1;border-radius:5px;background:#0D2137;color:#fff;font:500 13px Inter;cursor:pointer" style-hover="background:#163352">Editar</button>
+                      </div>
+                    </td>
+                  </tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:48px 24px;text-align:center">
+              <p style="font:600 16px Inter;color:#0D2137;margin:0 0 6px">Sem resultados</p>
+              <p style="font:400 14px Inter;color:#475569;margin:0">Ajuste a pesquisa ou crie um novo registo.</p>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isQuoteEditor }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="Editor de orçamento" style="display:flex;flex-direction:column;gap:20px">
+          <div style="background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 2px 12px rgba(13,33,55,0.08);padding:24px">
+            <h2 style="font:600 20px Inter;color:#0D2137;margin:0 0 20px">Dados do orçamento</h2>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px">
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Cliente</label>
+                <select data-field="clienteId" value="{{ quote.clienteId }}" onChange="{{ onQuoteField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+                  <sc-for list="{{ clientOptions }}" as="o" hint-placeholder-count="4">
+                    <option value="{{ o.id }}">{{ o.nome }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Data de emissão</label>
+                <input type="date" data-field="dataEmissao" value="{{ quote.dataEmissao }}" onChange="{{ onQuoteField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Data de validade</label>
+                <input type="date" data-field="dataValidade" value="{{ quote.dataValidade }}" onChange="{{ onQuoteField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Referência da obra</label>
+                <input type="text" data-field="obra" value="{{ quote.obra }}" onChange="{{ onQuoteField }}" placeholder="Ex.: Reabilitação Rua do Carmo, 14" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+            </div>
+          </div>
+
+          <sc-for list="{{ ambientes }}" as="amb" hint-placeholder-count="2">
+            <div style="background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 2px 12px rgba(13,33,55,0.08);overflow:hidden">
+              <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;background:#F0F4F8">
+                <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:240px">
+                  <span style="font:500 11px Inter;color:#94A3B8;text-transform:uppercase;letter-spacing:.06em">Ambiente</span>
+                  <input type="text" value="{{ amb.nome }}" onChange="{{ amb.onRename }}" style="flex:1;min-width:0;padding:8px 14px;border:1px solid #E2E8F0;border-radius:5px;font:600 14px Inter;color:#0D2137;background:#fff">
+                </div>
+                <div style="display:flex;align-items:center;gap:12px">
+                  <span style="font:600 15px Inter;color:#0D2137">{{ amb.subtotal }}</span>
+                  <button type="button" onClick="{{ amb.onRemove }}" style="padding:7px 14px;border:1px solid #F87171;border-radius:5px;background:#fff;color:#B91C1C;font:500 13px Inter;cursor:pointer" style-hover="background:rgba(220,38,38,0.08)">Remover ambiente</button>
+                </div>
+              </div>
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;min-width:820px">
+                  <thead>
+                    <tr>
+                      <th style="padding:10px 16px;text-align:left;font:600 12px Inter;color:#475569">Artigo do catálogo</th>
+                      <th style="padding:10px 16px;text-align:left;font:600 12px Inter;color:#475569;width:110px">Quantidade</th>
+                      <th style="padding:10px 16px;text-align:left;font:600 12px Inter;color:#475569;width:130px">Preço unitário</th>
+                      <th style="padding:10px 16px;text-align:left;font:600 12px Inter;color:#475569">Nota</th>
+                      <th style="padding:10px 16px;text-align:right;font:600 12px Inter;color:#475569;width:120px">Total</th>
+                      <th style="width:52px"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ amb.linhas }}" as="ln" hint-placeholder-count="3">
+                      <tr style="border-top:1px solid #EEF2F7">
+                        <td style="padding:10px 16px">
+                          <select value="{{ ln.itemId }}" onChange="{{ ln.onItem }}" style="width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:5px;font:400 13px Inter;color:#0D2137;background:#fff">
+                            <sc-for list="{{ itemOptions }}" as="o" hint-placeholder-count="5">
+                              <option value="{{ o.id }}">{{ o.nome }}</option>
+                            </sc-for>
+                          </select>
+                          <p style="font:400 11px Inter;color:#94A3B8;margin:5px 0 0">{{ ln.meta }}</p>
+                        </td>
+                        <td style="padding:10px 16px">
+                          <input type="number" step="0.01" min="0" value="{{ ln.qtd }}" onChange="{{ ln.onQtd }}" onBlur="{{ ln.onQtd }}" style="width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:5px;font:400 13px Inter;color:#0D2137;background:#fff;text-align:right">
+                        </td>
+                        <td style="padding:10px 16px">
+                          <input type="number" step="0.01" min="0" value="{{ ln.preco }}" onChange="{{ ln.onPreco }}" onBlur="{{ ln.onPreco }}" style="width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:5px;font:400 13px Inter;color:#0D2137;background:#fff;text-align:right">
+                        </td>
+                        <td style="padding:10px 16px">
+                          <input type="text" value="{{ ln.nota }}" onChange="{{ ln.onNota }}" placeholder="Opcional" style="width:100%;padding:9px 12px;border:1px solid #E2E8F0;border-radius:5px;font:400 13px Inter;color:#0D2137;background:#fff">
+                        </td>
+                        <td style="padding:10px 16px;text-align:right;font:600 14px Inter;color:#0D2137">{{ ln.total }}</td>
+                        <td style="padding:10px 16px;text-align:right">
+                          <button type="button" onClick="{{ ln.onRemove }}" aria-label="Remover linha" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#B91C1C;font:600 15px Inter;cursor:pointer;line-height:1" style-hover="background:rgba(220,38,38,0.08)">×</button>
+                        </td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+              </div>
+              <div style="padding:12px 20px;border-top:1px solid #EEF2F7">
+                <button type="button" onClick="{{ amb.onAddLine }}" style="padding:9px 16px;border:1px dashed #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:500 13px Inter;cursor:pointer" style-hover="background:#F0F4F8">+ Adicionar artigo</button>
+              </div>
+            </div>
+          </sc-for>
+
+          <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;background:#fff;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 2px 12px rgba(13,33,55,0.08);padding:20px 24px">
+            <button type="button" onClick="{{ onAddAmbiente }}" style="padding:11px 18px;border:1px dashed #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">+ Novo ambiente</button>
+            <div style="display:flex;gap:32px;align-items:center;flex-wrap:wrap">
+              <div style="text-align:right">
+                <p style="font:400 12px Inter;color:#475569;margin:0">Artigos</p>
+                <p style="font:600 16px Inter;color:#0D2137;margin:2px 0 0">{{ quoteItemCount }}</p>
+              </div>
+              <div style="text-align:right">
+                <p style="font:400 12px Inter;color:#475569;margin:0">IVA (23%)</p>
+                <p style="font:600 16px Inter;color:#0D2137;margin:2px 0 0">{{ quoteVat }}</p>
+              </div>
+              <div style="text-align:right;padding-left:32px;border-left:1px solid #E2E8F0">
+                <p style="font:400 12px Inter;color:#475569;margin:0">Total com IVA</p>
+                <p style="font:700 26px Inter;color:#2BAA74;margin:2px 0 0;letter-spacing:-.02em">{{ quoteTotal }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:flex-end">
+            <button type="button" onClick="{{ onCancelQuote }}" style="padding:12px 22px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Cancelar</button>
+            <button type="button" onClick="{{ onSaveQuote }}" style="padding:12px 22px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer;box-shadow:0 8px 32px rgba(62,201,142,0.25)" style-hover="background:#4DD29A">Guardar orçamento</button>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+
+  <sc-if value="{{ showAgendaModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClose }}" style="position:fixed;inset:0;z-index:60;background:rgba(13,33,55,0.45);display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;animation:cpFadeIn .18s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:640px;margin:auto;background:#fff;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);animation:cpFadeUp .22s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 24px 0">
+          <div>
+            <h2 style="font:700 20px Inter;color:#0D2137;margin:0">{{ agendaModalTitle }}</h2>
+            <p style="font:400 13px Inter;color:#475569;margin:6px 0 0">Campos com * são obrigatórios.</p>
+          </div>
+          <button type="button" onClick="{{ onCloseModal }}" aria-label="Fechar" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#475569;font:400 18px Inter;cursor:pointer;line-height:1;flex:none" style-hover="background:#F0F4F8">×</button>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Descrição *</label>
+            <input type="text" data-field="descricao" value="{{ ag.descricao }}" onChange="{{ onAgendaField }}" placeholder="Ex.: Vistoria de estrutura — Rua do Carmo" style="width:100%;padding:11px 16px;border:1px solid {{ ag.descBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+          </div>
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Estado</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ statusChips }}" as="s" hint-placeholder-count="6">
+                <button type="button" onClick="{{ s.onClick }}" style="padding:7px 14px;border-radius:5px;cursor:pointer;white-space:nowrap;font:500 13px Inter;border:1px solid {{ s.border }};background:{{ s.bg }};color:{{ s.fg }}">{{ s.label }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:16px">
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Data de início *</label>
+              <input type="date" data-field="inicioData" value="{{ ag.inicioData }}" onChange="{{ onAgendaField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Hora de início *</label>
+              <input type="time" data-field="inicioHora" value="{{ ag.inicioHora }}" onChange="{{ onAgendaField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Data de fim *</label>
+              <input type="date" data-field="fimData" value="{{ ag.fimData }}" onChange="{{ onAgendaField }}" style="width:100%;padding:11px 14px;border:1px solid {{ ag.fimBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Hora de fim *</label>
+              <input type="time" data-field="fimHora" value="{{ ag.fimHora }}" onChange="{{ onAgendaField }}" style="width:100%;padding:11px 14px;border:1px solid {{ ag.fimBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+          </div>
+          <sc-if value="{{ agendaError }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:5px;background:rgba(220,38,38,0.12);border:1px solid #F87171">
+              <div style="width:8px;height:8px;border-radius:50%;background:#B91C1C;margin-top:6px;flex:none"></div>
+              <p style="font:500 13px/1.4 Inter;color:#B91C1C;margin:0">{{ agendaError }}</p>
+            </div>
+          </sc-if>
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Detalhes e notas</label>
+            <div style="border:1px solid #E2E8F0;border-radius:5px;overflow:hidden">
+              <div style="display:flex;gap:4px;padding:8px;border-bottom:1px solid #E2E8F0;background:#F0F4F8">
+                <sc-for list="{{ rtButtons }}" as="b" hint-placeholder-count="4">
+                  <button type="button" onMouseDown="{{ b.onClick }}" title="{{ b.title }}" style="min-width:32px;height:32px;padding:0 10px;white-space:nowrap;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#0D2137;cursor:pointer;font:{{ b.font }} 13px Inter" style-hover="background:#E2E8F0">{{ b.label }}</button>
+                </sc-for>
+              </div>
+              <div contentEditable="true" ref="{{ notesRef }}" onInput="{{ onNotesInput }}" style="min-height:120px;padding:14px 16px;font:400 14px/1.6 Inter;color:#0D2137;background:#fff"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;padding:16px 24px;border-top:1px solid #E2E8F0;background:#F7F9FC;border-radius:5px">
+          <sc-if value="{{ agendaCanDelete }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ onAskDeleteAgenda }}" style="padding:11px 20px;border:1px solid #F87171;border-radius:5px;background:#fff;color:#B91C1C;font:600 14px Inter;cursor:pointer" style-hover="background:rgba(220,38,38,0.08)">Eliminar</button>
+          </sc-if>
+          <div style="display:flex;gap:12px;margin-left:auto">
+            <button type="button" onClick="{{ onCloseModal }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Fechar</button>
+            <button type="button" onClick="{{ onSaveAgenda }}" style="padding:11px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer" style-hover="background:#4DD29A">Guardar marcação</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showEntityModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClose }}" style="position:fixed;inset:0;z-index:60;background:rgba(13,33,55,0.45);display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;animation:cpFadeIn .18s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:520px;margin:auto;background:#fff;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);animation:cpFadeUp .22s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 24px 0">
+          <h2 style="font:700 20px Inter;color:#0D2137;margin:0">{{ entityModalTitle }}</h2>
+          <button type="button" onClick="{{ onCloseModal }}" aria-label="Fechar" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#475569;font:400 18px Inter;cursor:pointer;line-height:1;flex:none" style-hover="background:#F0F4F8">×</button>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Nome *</label>
+            <input type="text" data-field="nome" value="{{ ent.nome }}" onChange="{{ onEntityField }}" placeholder="{{ entityNamePlaceholder }}" style="width:100%;padding:11px 16px;border:1px solid {{ ent.nomeBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            <sc-if value="{{ entityError }}" hint-placeholder-val="{{ false }}">
+              <p style="font:500 12px Inter;color:#B91C1C;margin:6px 0 0">{{ entityError }}</p>
+            </sc-if>
+          </div>
+          <sc-if value="{{ entityHasMulti }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">{{ entityMultiLabel }}</label>
+              <div style="border:1px solid #E2E8F0;border-radius:5px;padding:10px 12px;background:#fff;display:flex;flex-wrap:wrap;gap:8px;min-height:46px;align-items:center">
+                <sc-for list="{{ entitySelected }}" as="t" hint-placeholder-count="0">
+                  <span style="display:inline-flex;align-items:center;gap:8px;padding:5px 8px 5px 12px;border-radius:999px;background:rgba(62,201,142,0.14);color:#2BAA74;font:500 13px Inter">
+                    {{ t.nome }}
+                    <button type="button" onClick="{{ t.onRemove }}" aria-label="Remover" style="width:18px;height:18px;border:none;border-radius:5px;background:rgba(43,170,116,0.2);color:#2BAA74;cursor:pointer;font:600 12px Inter;line-height:1;padding:0">×</button>
+                  </span>
+                </sc-for>
+                <button type="button" onClick="{{ onToggleMulti }}" style="padding:5px 12px;border:1px dashed #CBD5E1;border-radius:5px;background:#fff;color:#475569;font:500 13px Inter;cursor:pointer" style-hover="background:#F0F4F8">+ Associar</button>
+              </div>
+              <sc-if value="{{ multiOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);max-height:200px;overflow-y:auto;background:#fff">
+                  <sc-for list="{{ entityOptions }}" as="o" hint-placeholder-count="5">
+                    <button type="button" onClick="{{ o.onClick }}" style="border-radius:5px;display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;border:none;background:{{ o.bg }};cursor:pointer;text-align:left;font:400 14px Inter;color:#0D2137" style-hover="background:#F0F4F8">
+                      <span style="width:16px;height:16px;border-radius:5px;border:1px solid {{ o.boxBorder }};background:{{ o.boxBg }};flex:none"></span>
+                      {{ o.nome }}
+                    </button>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:space-between;padding:16px 24px;border-top:1px solid #E2E8F0;background:#F7F9FC;border-radius:5px">
+          <sc-if value="{{ entityCanDelete }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ onAskDeleteEntity }}" style="padding:11px 20px;border:1px solid #F87171;border-radius:5px;background:#fff;color:#B91C1C;font:600 14px Inter;cursor:pointer" style-hover="background:rgba(220,38,38,0.08)">Eliminar</button>
+          </sc-if>
+          <div style="display:flex;gap:12px;margin-left:auto">
+            <button type="button" onClick="{{ onCloseModal }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Cancelar</button>
+            <button type="button" onClick="{{ onSaveEntity }}" style="padding:11px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer" style-hover="background:#4DD29A">Guardar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showItemModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClose }}" style="position:fixed;inset:0;z-index:60;background:rgba(13,33,55,0.45);display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;animation:cpFadeIn .18s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:880px;margin:auto;background:#fff;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);animation:cpFadeUp .22s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 24px 0">
+          <div>
+            <h2 style="font:700 20px Inter;color:#0D2137;margin:0">{{ itemModalTitle }}</h2>
+            <p style="font:400 13px Inter;color:#475569;margin:6px 0 0">Grupo e SubGrupo são preenchidos automaticamente a partir da categoria.</p>
+          </div>
+          <button type="button" onClick="{{ onCloseModal }}" aria-label="Fechar" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#475569;font:400 18px Inter;cursor:pointer;line-height:1;flex:none" style-hover="background:#F0F4F8">×</button>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:24px">
+          <div>
+            <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Identificação</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px">
+              <div style="grid-column:1/-1">
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Nome do artigo *</label>
+                <input type="text" data-field="nome" value="{{ it.nome }}" onChange="{{ onItemField }}" placeholder="Ex.: Cimento Portland CEM II 42,5R 25 kg" style="width:100%;padding:11px 16px;border:1px solid {{ it.nomeBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Categoria *</label>
+                <select data-field="categoriaId" value="{{ it.categoriaId }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+                  <sc-for list="{{ categoriaOptions }}" as="o" hint-placeholder-count="3">
+                    <option value="{{ o.id }}">{{ o.nome }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Grupo (automático)</label>
+                <input type="text" value="{{ it.grupoNome }}" readOnly="{{ true }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#94A3B8;background:#F0F4F8;cursor:not-allowed">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">SubGrupo (automático)</label>
+                <input type="text" value="{{ it.subgrupoNome }}" readOnly="{{ true }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#94A3B8;background:#F0F4F8;cursor:not-allowed">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">SKU</label>
+                <input type="text" data-field="sku" value="{{ it.sku }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Código de barras</label>
+                <input type="text" data-field="codigoBarras" value="{{ it.codigoBarras }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">NCM</label>
+                <input type="text" data-field="ncm" value="{{ it.ncm }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Unidade</label>
+                <select data-field="unidade" value="{{ it.unidade }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 14px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+                  <sc-for list="{{ unidadeOptions }}" as="u" hint-placeholder-count="5">
+                    <option value="{{ u }}">{{ u }}</option>
+                  </sc-for>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Stock e preços</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px">
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Stock atual</label>
+                <input type="number" step="0.01" data-field="stock" value="{{ it.stock }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Stock mínimo</label>
+                <input type="number" step="0.01" data-field="stockMin" value="{{ it.stockMin }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+                <p style="font:400 11px Inter;color:#94A3B8;margin:6px 0 0">Abaixo deste valor o artigo é assinalado nos orçamentos.</p>
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Preço unitário (€)</label>
+                <input type="number" step="0.01" data-field="precoUnit" value="{{ it.precoUnit }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Markup (%)</label>
+                <input type="number" step="0.1" data-field="markup" value="{{ it.markup }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+              <div>
+                <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Custo médio (€)</label>
+                <input type="number" step="0.01" data-field="custoMedio" value="{{ it.custoMedio }}" onChange="{{ onItemField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+              </div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px">
+            <div>
+              <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Fornecedor preferencial</p>
+              <div style="position:relative">
+                <input type="text" value="{{ supplierQuery }}" onChange="{{ onSupplierQuery }}" onFocus="{{ onSupplierFocus }}" placeholder="Procurar fornecedor…" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+                <sc-if value="{{ supplierOpen }}" hint-placeholder-val="{{ false }}">
+                  <div style="position:absolute;top:52px;left:0;right:0;z-index:5;border:1px solid #E2E8F0;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);background:#fff;max-height:220px;overflow-y:auto">
+                    <sc-for list="{{ supplierMatches }}" as="s" hint-placeholder-count="4">
+                      <button type="button" onClick="{{ s.onClick }}" style="border-radius:5px;display:block;width:100%;padding:10px 14px;border:none;background:#fff;cursor:pointer;text-align:left;font:400 14px Inter;color:#0D2137" style-hover="background:#F0F4F8">{{ s.nome }}</button>
+                    </sc-for>
+                    <button type="button" onClick="{{ onAddSupplier }}" style="border-radius:5px;display:block;width:100%;padding:10px 14px;border:none;border-top:1px solid #E2E8F0;background:#fff;cursor:pointer;text-align:left;font:600 14px Inter;color:#2BAA74" style-hover="background:#F0F4F8">+ Adicionar novo fornecedor</button>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ it.fornecedorNome }}" hint-placeholder-val="{{ false }}">
+                <span style="display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:5px 8px 5px 12px;border-radius:999px;background:rgba(62,201,142,0.14);color:#2BAA74;font:500 13px Inter">
+                  {{ it.fornecedorNome }}
+                  <button type="button" onClick="{{ onClearSupplier }}" aria-label="Remover fornecedor" style="width:18px;height:18px;border:none;border-radius:5px;background:rgba(43,170,116,0.2);color:#2BAA74;cursor:pointer;font:600 12px Inter;line-height:1;padding:0">×</button>
+                </span>
+              </sc-if>
+            </div>
+            <div>
+              <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Estado</p>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px">
+                <div>
+                  <p style="font:500 14px Inter;color:#0D2137;margin:0">{{ it.ativoLabel }}</p>
+                  <p style="font:400 12px Inter;color:#475569;margin:3px 0 0">Artigos inativos não aparecem em orçamentos.</p>
+                </div>
+                <button type="button" onClick="{{ onToggleAtivo }}" role="switch" aria-checked="{{ it.ativo }}" style="width:48px;height:28px;border-radius:5px;border:none;cursor:pointer;padding:3px;flex:none;display:flex;justify-content:{{ it.switchJustify }};background:{{ it.switchBg }};transition:background .15s ease">
+                  <span style="width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(13,33,55,0.3)"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p style="font:600 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 12px">Imagem do artigo</p>
+            <label style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:24px;border:1.5px dashed #CBD5E1;border-radius:5px;background:#F7F9FC;cursor:pointer;text-align:center" style-hover="background:#F0F4F8">
+              <input type="file" accept="image/*" onChange="{{ onItemImage }}" style="display:none">
+              <p style="font:600 14px Inter;color:#0D2137;margin:0">{{ imageLabel }}</p>
+              <p style="font:400 12px Inter;color:#94A3B8;margin:0">PNG ou JPG · mínimo 512×512 píxeis</p>
+            </label>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Descrição detalhada</label>
+              <textarea data-field="descricao" value="{{ it.descricao }}" onChange="{{ onItemField }}" rows="4" placeholder="Composição, aplicação, normas aplicáveis…" style="width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px/1.5 Inter;color:#0D2137;background:#fff;resize:vertical"></textarea>
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Notas internas</label>
+              <textarea data-field="notas" value="{{ it.notas }}" onChange="{{ onItemField }}" rows="4" placeholder="Visível apenas para a equipa interna." style="width:100%;padding:12px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px/1.5 Inter;color:#0D2137;background:#fff;resize:vertical"></textarea>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:space-between;padding:16px 24px;border-top:1px solid #E2E8F0;background:#F7F9FC;border-radius:5px">
+          <sc-if value="{{ itemCanDelete }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ onAskDeleteItem }}" style="padding:11px 20px;border:1px solid #F87171;border-radius:5px;background:#fff;color:#B91C1C;font:600 14px Inter;cursor:pointer" style-hover="background:rgba(220,38,38,0.08)">Eliminar</button>
+          </sc-if>
+          <div style="display:flex;gap:12px;margin-left:auto">
+            <button type="button" onClick="{{ onCloseModal }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Cancelar</button>
+            <button type="button" onClick="{{ onSaveItem }}" style="padding:11px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer" style-hover="background:#4DD29A">Guardar artigo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showPartnerModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onOverlayClose }}" style="position:fixed;inset:0;z-index:60;background:rgba(13,33,55,0.45);display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;animation:cpFadeIn .18s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:560px;margin:auto;background:#fff;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);animation:cpFadeUp .22s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px 24px 0">
+          <h2 style="font:700 20px Inter;color:#0D2137;margin:0">{{ partnerModalTitle }}</h2>
+          <button type="button" onClick="{{ onCloseModal }}" aria-label="Fechar" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#475569;font:400 18px Inter;cursor:pointer;line-height:1;flex:none" style-hover="background:#F0F4F8">×</button>
+        </div>
+        <div style="padding:24px;display:flex;flex-direction:column;gap:20px">
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Nome do parceiro *</label>
+            <input type="text" data-field="nome" value="{{ pa.nome }}" onChange="{{ onPartnerField }}" placeholder="Ex.: Almeida &amp; Filhos, Lda" style="width:100%;padding:11px 16px;border:1px solid {{ pa.nomeBorder }};border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            <sc-if value="{{ partnerError }}" hint-placeholder-val="{{ false }}">
+              <p style="font:500 12px Inter;color:#B91C1C;margin:6px 0 0">{{ partnerError }}</p>
+            </sc-if>
+          </div>
+          <div>
+            <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Tipo de parceiro</label>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <sc-for list="{{ partnerTypeChips }}" as="t" hint-placeholder-count="2">
+                <button type="button" onClick="{{ t.onClick }}" style="padding:9px 18px;border-radius:5px;cursor:pointer;font:500 14px Inter;border:1px solid {{ t.border }};background:{{ t.bg }};color:{{ t.fg }}">{{ t.label }}</button>
+              </sc-for>
+            </div>
+            <p style="font:400 12px Inter;color:#94A3B8;margin:8px 0 0">Um parceiro pode ser cliente e fornecedor em simultâneo.</p>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">NIF</label>
+              <input type="text" data-field="nif" value="{{ pa.nif }}" onChange="{{ onPartnerField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Email</label>
+              <input type="email" data-field="email" value="{{ pa.email }}" onChange="{{ onPartnerField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Telefone</label>
+              <input type="text" data-field="telefone" value="{{ pa.telefone }}" onChange="{{ onPartnerField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+            <div>
+              <label style="display:block;font:500 12px Inter;color:#475569;margin-bottom:6px">Localidade</label>
+              <input type="text" data-field="localidade" value="{{ pa.localidade }}" onChange="{{ onPartnerField }}" style="width:100%;padding:11px 16px;border:1px solid #E2E8F0;border-radius:5px;font:400 14px Inter;color:#0D2137;background:#fff">
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:space-between;padding:16px 24px;border-top:1px solid #E2E8F0;background:#F7F9FC;border-radius:5px">
+          <sc-if value="{{ partnerCanDelete }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ onAskDeletePartner }}" style="padding:11px 20px;border:1px solid #F87171;border-radius:5px;background:#fff;color:#B91C1C;font:600 14px Inter;cursor:pointer" style-hover="background:rgba(220,38,38,0.08)">Eliminar</button>
+          </sc-if>
+          <div style="display:flex;gap:12px;margin-left:auto">
+            <button type="button" onClick="{{ onCloseModal }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Cancelar</button>
+            <button type="button" onClick="{{ onSavePartner }}" style="padding:11px 20px;border:none;border-radius:5px;background:#3EC98E;color:#08301F;font:600 14px Inter;cursor:pointer" style-hover="background:#4DD29A">Guardar parceiro</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showDetail }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ onCloseModal }}" style="position:fixed;inset:0;z-index:65;background:rgba(13,33,55,0.45);display:flex;justify-content:flex-end;animation:cpFadeIn .18s ease both">
+      <div onClick="{{ stop }}" style="width:100%;max-width:460px;height:100%;background:#fff;box-shadow:0 8px 24px rgba(13,33,55,0.12);display:flex;flex-direction:column;animation:cpSlideIn .24s ease both">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:24px;border-bottom:1px solid #E2E8F0">
+          <div>
+            <p style="font:500 11px Inter;color:#94A3B8;letter-spacing:.08em;text-transform:uppercase;margin:0 0 6px">{{ detailKind }}</p>
+            <h2 style="font:700 20px/1.25 Inter;color:#0D2137;margin:0">{{ detailTitle }}</h2>
+          </div>
+          <button type="button" onClick="{{ onCloseModal }}" aria-label="Fechar" style="width:32px;height:32px;border:1px solid #E2E8F0;border-radius:5px;background:#fff;color:#475569;font:400 18px Inter;cursor:pointer;line-height:1;flex:none" style-hover="background:#F0F4F8">×</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:8px 24px 24px">
+          <sc-for list="{{ detailRows }}" as="d" hint-placeholder-count="6">
+            <div style="display:flex;gap:16px;justify-content:space-between;padding:14px 0;border-bottom:1px solid #EEF2F7">
+              <span style="font:400 13px Inter;color:#475569;flex:none;max-width:45%">{{ d.label }}</span>
+              <span style="font:500 13px Inter;color:#0D2137;text-align:right">{{ d.value }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding:16px 24px;border-top:1px solid #E2E8F0;background:#F7F9FC;display:flex;gap:12px;justify-content:flex-end">
+          <button type="button" onClick="{{ onCloseModal }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Fechar</button>
+          <button type="button" onClick="{{ onEditFromDetail }}" style="padding:11px 20px;border:none;border-radius:5px;background:#0D2137;color:#fff;font:600 14px Inter;cursor:pointer" style-hover="background:#163352">Editar</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ showConfirm }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;inset:0;z-index:70;background:rgba(13,33,55,0.55);display:flex;align-items:center;justify-content:center;padding:24px;animation:cpFadeIn .15s ease both">
+      <div style="width:100%;max-width:440px;background:#fff;border-radius:5px;box-shadow:0 8px 24px rgba(13,33,55,0.12);padding:28px;animation:cpFadeUp .2s ease both">
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px">
+          <div style="width:34px;height:34px;border-radius:5px;background:rgba(220,38,38,0.12);display:flex;align-items:center;justify-content:center;flex:none">
+            <div style="width:10px;height:10px;border-radius:50%;background:#B91C1C"></div>
+          </div>
+          <div>
+            <h2 style="font:700 18px Inter;color:#0D2137;margin:0">{{ confirmTitle }}</h2>
+            <p style="font:400 14px/1.5 Inter;color:#475569;margin:8px 0 0">{{ confirmText }}</p>
+          </div>
+        </div>
+        <div style="padding:12px 14px;border-radius:5px;background:rgba(220,38,38,0.12);border:1px solid #F87171;margin-bottom:20px">
+          <p style="font:600 13px Inter;color:#B91C1C;margin:0">Esta ação é irreversível.</p>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:flex-end">
+          <button type="button" onClick="{{ onCancelConfirm }}" style="padding:11px 20px;border:1px solid #CBD5E1;border-radius:5px;background:#fff;color:#0D2137;font:600 14px Inter;cursor:pointer" style-hover="background:#F0F4F8">Cancelar</button>
+          <button type="button" onClick="{{ onAcceptConfirm }}" style="padding:11px 20px;border:none;border-radius:5px;background:#B91C1C;color:#fff;font:600 14px Inter;cursor:pointer" style-hover="background:#991B1B">Eliminar definitivamente</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <div style="position:fixed;top:76px;right:20px;z-index:80;display:flex;flex-direction:column;gap:10px;pointer-events:none">
+    <sc-for list="{{ toasts }}" as="t" hint-placeholder-count="0">
+      <div style="min-width:280px;max-width:360px;padding:14px 16px;border-radius:5px;background:#fff;border:1px solid {{ t.border }};box-shadow:0 8px 24px rgba(13,33,55,0.12);display:flex;gap:10px;align-items:flex-start;animation:cpSlideIn .22s ease both">
+        <div style="width:8px;height:8px;border-radius:50%;margin-top:6px;flex:none;background:{{ t.fg }}"></div>
+        <div>
+          <p style="font:600 14px Inter;color:{{ t.fg }};margin:0">{{ t.title }}</p>
+          <sc-if value="{{ t.text }}" hint-placeholder-val="{{ false }}">
+            <p style="font:400 13px/1.4 Inter;color:#475569;margin:4px 0 0">{{ t.text }}</p>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Login&quot;,&quot;Aplicação&quot;],&quot;default&quot;:&quot;Login&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demonstração&quot;},&quot;demoEmail&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;joana.matos@constructplus.pt&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demonstração&quot;},&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Dia&quot;,&quot;Semana&quot;,&quot;Mês&quot;,&quot;Ano&quot;],&quot;default&quot;:&quot;Dia&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Agenda&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Navegação&quot;}}">
+const pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const startOfWeek = d => { const x = new Date(d); const w = (x.getDay() + 6) % 7; x.setDate(x.getDate() - w); x.setHours(0,0,0,0); return x; };
+const eur = n => (Number(n) || 0).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+const num = n => (Number(n) || 0).toLocaleString('pt-PT', { maximumFractionDigits: 2 });
+const MONTHS = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const DOWS = ['seg','ter','qua','qui','sex','sáb','dom'];
+
+const STATUS = {
+  'Em espera':  { bg: 'rgba(148,163,184,0.20)', fg: '#475569', border: '#CBD5E1' },
+  'Adiado':     { bg: 'rgba(245,158,11,0.14)',  fg: '#B45309', border: '#FBBF24' },
+  'Em revisão': { bg: 'rgba(37,99,235,0.12)',   fg: '#1D4ED8', border: '#60A5FA' },
+  'Em curso':   { bg: 'rgba(44,74,110,0.14)',   fg: '#2C4A6E', border: '#2C4A6E' },
+  'Concluído':  { bg: 'rgba(62,201,142,0.14)',  fg: '#2BAA74', border: '#5DDBA2' },
+  'Cancelado':  { bg: 'rgba(220,38,38,0.12)',   fg: '#B91C1C', border: '#F87171' }
+};
+const STATUS_LIST = Object.keys(STATUS);
+
+const NAV = [
+  { label: '', items: [{ id: 'agenda', label: 'Agenda', abbr: 'AG' }] },
+  { label: 'Operacional', items: [
+    { id: 'categorias', label: 'Categorias', abbr: 'CT' },
+    { id: 'grupos', label: 'Grupos', abbr: 'GR' },
+    { id: 'subgrupos', label: 'SubGrupos', abbr: 'SG' },
+    { id: 'catalogo', label: 'Catálogo', abbr: 'CA' }
+  ] },
+  { label: 'Comercial', items: [
+    { id: 'parceiros', label: 'Parceiros', abbr: 'PA' },
+    { id: 'orcamentos', label: 'Orçamentos', abbr: 'OR' }
+  ] }
+];
+
+const PAGES = {
+  agenda:     { crumb: 'Operacional', title: 'Agenda', sub: 'Marcações de obra, vistorias e reuniões da equipa.', action: '+ Nova agenda' },
+  categorias: { crumb: 'Operacional · Aprovisionamento', title: 'Categorias', sub: 'Primeiro nível da árvore de aprovisionamento. Cada categoria agrega um ou mais grupos.', action: '+ Adicionar categoria', search: 'Procurar por nome…' },
+  grupos:     { crumb: 'Operacional · Aprovisionamento', title: 'Grupos', sub: 'Segundo nível. Cada grupo agrega os subgrupos que descrevem o material.', action: '+ Adicionar grupo', search: 'Procurar por nome…' },
+  subgrupos:  { crumb: 'Operacional · Aprovisionamento', title: 'SubGrupos', sub: 'Terceiro nível da árvore, usado para classificar artigos do catálogo.', action: '+ Adicionar subgrupo', search: 'Procurar por nome…' },
+  catalogo:   { crumb: 'Operacional · Aprovisionamento', title: 'Catálogo', sub: 'Artigos disponíveis para orçamentação, com stock, preços e fornecedor preferencial.', action: '+ Adicionar artigo', search: 'Procurar artigo por nome…' },
+  parceiros:  { crumb: 'Comercial', title: 'Parceiros', sub: 'Clientes e fornecedores num único registo. Um parceiro pode ter ambos os papéis.', action: '+ Adicionar parceiro', search: 'Procurar por nome…' },
+  orcamentos: { crumb: 'Comercial', title: 'Orçamentos', sub: 'Propostas por ambiente, com cálculo automático a partir do catálogo.', action: '+ Novo orçamento', search: 'Procurar por referência ou cliente…' }
+};
+
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    this.today = today;
+    this.notesRef = React.createRef();
+    const w0 = typeof window !== 'undefined' ? window.innerWidth : 1440;
+    this.state = Object.assign({
+      screen: (props.startScreen === 'Aplicação') ? 'app' : 'login',
+      loginEmail: props.demoEmail || 'joana.matos@constructplus.pt',
+      loginPass: '',
+      loginError: '',
+      recEmail: '',
+      recSent: false,
+      recCountdown: 5,
+      route: 'agenda',
+      collapsed: !!props.sidebarCollapsed || w0 < 1024,
+      width: w0,
+      calMode: props.defaultView || 'Dia',
+      cursor: iso(today),
+      search: '',
+      modal: null,
+      form: null,
+      formErr: '',
+      multiOpen: false,
+      supplierQuery: '',
+      supplierOpen: false,
+      detail: null,
+      confirm: null,
+      quote: null,
+      toasts: [],
+      notesKey: 0
+    }, this.seed(today));
+  }
+
+  seed(today) {
+    const d = n => iso(addDays(startOfWeek(today), n));
+    const subgrupos = [
+      { id: 's1', nome: 'Cimentos' }, { id: 's2', nome: 'Areias e britas' },
+      { id: 's3', nome: 'Tubagem PVC' }, { id: 's4', nome: 'Torneiras' },
+      { id: 's5', nome: 'Tinta interior' }, { id: 's6', nome: 'Tinta exterior' },
+      { id: 's7', nome: 'Azulejo' }, { id: 's8', nome: 'Pavimento' },
+      { id: 's9', nome: 'Cabo elétrico' }, { id: 's10', nome: 'Quadros elétricos' },
+      { id: 's11', nome: 'Placas de gesso' }, { id: 's12', nome: 'Perfis metálicos' }
+    ];
+    const grupos = [
+      { id: 'g1', nome: 'Alvenaria', subgrupoIds: ['s1', 's2'] },
+      { id: 'g2', nome: 'Canalização', subgrupoIds: ['s3', 's4'] },
+      { id: 'g3', nome: 'Pinturas', subgrupoIds: ['s5', 's6'] },
+      { id: 'g4', nome: 'Revestimentos', subgrupoIds: ['s7', 's8'] },
+      { id: 'g5', nome: 'Eletricidade', subgrupoIds: ['s9', 's10'] },
+      { id: 'g6', nome: 'Gesso cartonado', subgrupoIds: ['s11', 's12'] }
+    ];
+    const categorias = [
+      { id: 'c1', nome: 'Estrutura', grupoIds: ['g1'] },
+      { id: 'c2', nome: 'Acabamentos', grupoIds: ['g3', 'g4', 'g6'] },
+      { id: 'c3', nome: 'Instalações técnicas', grupoIds: ['g2', 'g5'] }
+    ];
+    const parceiros = [
+      { id: 'p1', nome: 'Almeida & Filhos, Lda', tipos: ['Cliente'], nif: '502 341 887', email: 'geral@almeidafilhos.pt', telefone: '234 421 900', localidade: 'Aveiro' },
+      { id: 'p2', nome: 'Betões do Mondego SA', tipos: ['Fornecedor'], nif: '505 118 402', email: 'encomendas@betoesmondego.pt', telefone: '239 700 114', localidade: 'Coimbra' },
+      { id: 'p3', nome: 'Câmara Municipal de Ílhavo', tipos: ['Cliente'], nif: '506 778 351', email: 'obras@cm-ilhavo.pt', telefone: '234 329 600', localidade: 'Ílhavo' },
+      { id: 'p4', nome: 'Tintas Norte, Lda', tipos: ['Fornecedor'], nif: '503 902 118', email: 'comercial@tintasnorte.pt', telefone: '229 380 447', localidade: 'Maia' },
+      { id: 'p5', nome: 'Grupo Ferrão', tipos: ['Cliente', 'Fornecedor'], nif: '507 664 210', email: 'contacto@grupoferrao.pt', telefone: '253 610 088', localidade: 'Braga' },
+      { id: 'p6', nome: 'Cerâmicas do Vouga SA', tipos: ['Fornecedor'], nif: '501 447 903', email: 'vendas@ceramicasvouga.pt', telefone: '234 910 220', localidade: 'Águeda' },
+      { id: 'p7', nome: 'Condomínio Douro Vista', tipos: ['Cliente'], nif: '900 114 552', email: 'admin@dourovista.pt', telefone: '223 004 118', localidade: 'Vila Nova de Gaia' },
+      { id: 'p8', nome: 'ElectroSul Instalações', tipos: ['Fornecedor', 'Cliente'], nif: '508 221 774', email: 'apoio@electrosul.pt', telefone: '289 445 100', localidade: 'Faro' }
+    ];
+    const mk = (id, nome, categoriaId, sku, barras, ncm, unidade, stock, stockMin, preco, markup, custo, forn, ativo, descricao, notas) =>
+      ({ id, nome, categoriaId, sku, codigoBarras: barras, ncm, unidade, stock, stockMin, precoUnit: preco, markup, custoMedio: custo, fornecedorId: forn, ativo, descricao, notas, imagem: '' });
+    const catalogo = [
+      mk('i1', 'Cimento Portland CEM II 42,5R 25 kg', 'c1', 'CIM-425-25', '5601234000117', '2523.29.00', 'saco', 340, 80, 6.35, 22, 5.20, 'p2', true, 'Cimento comum para betões e argamassas correntes, conforme NP EN 197-1.', 'Stock rotativo semanal. Confirmar validade em obra.'),
+      mk('i2', 'Areia lavada do rio', 'c1', 'ARE-LAV-M3', '5601234000124', '2505.10.00', 'm³', 48, 15, 27.90, 18, 23.60, 'p2', true, 'Areia siliciosa lavada, granulometria 0/4 mm.', 'Entrega mínima de 6 m³.'),
+      mk('i3', 'Tubo PVC pressão 110 mm · 3 m', 'c3', 'PVC-110-3', '5601234000131', '3917.23.00', 'un', 126, 40, 18.40, 25, 14.70, 'p5', true, 'Tubo em PVC-U para redes de drenagem residual.', ''),
+      mk('i4', 'Torneira misturadora monocomando', 'c3', 'TOR-MIS-01', '5601234000148', '8481.80.11', 'un', 62, 20, 74.50, 35, 55.20, 'p5', true, 'Misturadora de bancada, acabamento cromado, classe de ruído I.', 'Modelo em fim de linha — validar substituto.'),
+      mk('i5', 'Tinta plástica mate branca 15 L', 'c2', 'TIN-PLM-15', '5601234000155', '3209.10.00', 'balde', 54, 24, 62.80, 28, 49.10, 'p4', true, 'Tinta aquosa mate para interiores, rendimento 10 m²/L.', ''),
+      mk('i6', 'Primário fixador aquoso 5 L', 'c2', 'PRI-FIX-05', '5601234000162', '3209.10.00', 'balde', 18, 20, 31.20, 30, 24.00, 'p4', true, 'Primário de fixação para suportes absorventes.', 'Abaixo do stock mínimo — repor.'),
+      mk('i7', 'Azulejo cerâmico 30×60 branco', 'c2', 'AZU-3060-B', '5601234000179', '6907.21.00', 'm²', 410, 120, 14.90, 32, 11.30, 'p6', true, 'Revestimento cerâmico retificado, acabamento brilhante.', ''),
+      mk('i8', 'Pavimento flutuante carvalho 8 mm', 'c2', 'PAV-FLU-08', '5601234000186', '4411.13.00', 'm²', 233, 90, 21.60, 27, 17.00, 'p6', true, 'Pavimento laminado AC4 com sistema de encaixe.', ''),
+      mk('i9', 'Cabo H07V-K 2,5 mm²', 'c3', 'CAB-H07-25', '5601234000193', '8544.49.00', 'm', 1850, 600, 0.94, 40, 0.67, 'p8', true, 'Condutor flexível isolado em PVC, 450/750 V.', ''),
+      mk('i10', 'Quadro elétrico 12 módulos', 'c3', 'QUA-ELE-12', '5601234000209', '8537.10.99', 'un', 27, 10, 48.70, 34, 36.30, 'p8', true, 'Quadro de embutir com porta opaca e barramento de terra.', ''),
+      mk('i11', 'Placa gesso cartonado 13 mm · 1200×2500', 'c2', 'GES-PLA-13', '5601234000216', '6809.11.00', 'un', 214, 60, 9.80, 26, 7.75, 'p5', true, 'Placa standard para divisórias e tetos falsos.', ''),
+      mk('i12', 'Perfil metálico C48 · 3 m', 'c2', 'GES-PER-C48', '5601234000223', '7308.90.59', 'un', 96, 60, 4.55, 24, 3.65, 'p5', false, 'Perfil galvanizado para estrutura de gesso cartonado.', 'Artigo suspenso até nova adjudicação.')
+    ];
+    const agenda = [
+      { id: 'a1', descricao: 'Vistoria de estrutura — Rua do Carmo, 14', estado: 'Em curso', inicioData: d(0), inicioHora: '09:00', fimData: d(0), fimHora: '11:00', detalhes: '<p>Confirmar <b>armaduras do piso 1</b> com o eng. Pires.</p><ul><li>Levar relatório de betonagem</li><li>Fotografar juntas</li></ul>' },
+      { id: 'a2', descricao: 'Reunião de adjudicação — Grupo Ferrão', estado: 'Em espera', inicioData: d(0), inicioHora: '15:00', fimData: d(0), fimHora: '16:30', detalhes: '<p>Rever margens do orçamento <b>ORC-2026-014</b>.</p>' },
+      { id: 'a3', descricao: 'Receção de betão — obra Ílhavo', estado: 'Concluído', inicioData: d(1), inicioHora: '08:00', fimData: d(1), fimHora: '09:00', detalhes: '<p>Guia de remessa arquivada.</p>' },
+      { id: 'a4', descricao: 'Medição de revestimentos — Douro Vista', estado: 'Em revisão', inicioData: d(1), inicioHora: '14:00', fimData: d(1), fimHora: '17:00', detalhes: '' },
+      { id: 'a5', descricao: 'Visita técnica ElectroSul', estado: 'Adiado', inicioData: d(2), inicioHora: '10:00', fimData: d(2), fimHora: '12:00', detalhes: '<p>Reagendar para a semana seguinte.</p>' },
+      { id: 'a6', descricao: 'Fecho de contas de aprovisionamento', estado: 'Em espera', inicioData: d(3), inicioHora: '09:00', fimData: d(3), fimHora: '10:30', detalhes: '' },
+      { id: 'a7', descricao: 'Entrega de azulejo — Cerâmicas do Vouga', estado: 'Em curso', inicioData: d(3), inicioHora: '13:00', fimData: d(3), fimHora: '14:00', detalhes: '' },
+      { id: 'a8', descricao: 'Auditoria de segurança em estaleiro', estado: 'Em espera', inicioData: d(4), inicioHora: '11:00', fimData: d(4), fimHora: '13:00', detalhes: '<p>Checklist CSS obrigatória.</p>' },
+      { id: 'a9', descricao: 'Apresentação de orçamento — CM Ílhavo', estado: 'Em espera', inicioData: d(7), inicioHora: '10:00', fimData: d(7), fimHora: '11:00', detalhes: '' },
+      { id: 'a10', descricao: 'Levantamento em Gaia — pintura de fachada', estado: 'Cancelado', inicioData: d(8), inicioHora: '16:00', fimData: d(8), fimHora: '18:00', detalhes: '' }
+    ];
+    const orcamentos = [
+      { id: 'o1', ref: 'ORC-2026-012', clienteId: 'p1', obra: 'Reabilitação Rua do Carmo, 14', dataEmissao: iso(addDays(today, -12)), dataValidade: iso(addDays(today, 18)), estado: 'Em revisão',
+        ambientes: [
+          { id: 'e1', nome: 'Sala comum', linhas: [
+            { id: 'l1', itemId: 'i7', qtd: 42.5, preco: 14.90, nota: 'Rodapé incluído' },
+            { id: 'l2', itemId: 'i5', qtd: 3, preco: 62.80, nota: '' },
+            { id: 'l3', itemId: 'i11', qtd: 26, preco: 9.80, nota: 'Teto falso' }
+          ] },
+          { id: 'e2', nome: 'Cozinha', linhas: [
+            { id: 'l4', itemId: 'i7', qtd: 18.75, preco: 14.90, nota: '' },
+            { id: 'l5', itemId: 'i4', qtd: 2, preco: 74.50, nota: 'Bancada e lava-loiça' }
+          ] }
+        ] },
+      { id: 'o2', ref: 'ORC-2026-014', clienteId: 'p5', obra: 'Ampliação armazém Braga', dataEmissao: iso(addDays(today, -4)), dataValidade: iso(addDays(today, 26)), estado: 'Em espera',
+        ambientes: [
+          { id: 'e3', nome: 'Nave principal', linhas: [
+            { id: 'l6', itemId: 'i1', qtd: 120, preco: 6.35, nota: '' },
+            { id: 'l7', itemId: 'i2', qtd: 8.5, preco: 27.90, nota: 'Entrega fracionada' },
+            { id: 'l8', itemId: 'i9', qtd: 420, preco: 0.94, nota: '' }
+          ] }
+        ] },
+      { id: 'o3', ref: 'ORC-2026-015', clienteId: 'p7', obra: 'Pintura de fachada — Douro Vista', dataEmissao: iso(addDays(today, -1)), dataValidade: iso(addDays(today, 29)), estado: 'Em espera',
+        ambientes: [
+          { id: 'e4', nome: 'Fachada norte', linhas: [
+            { id: 'l9', itemId: 'i5', qtd: 12, preco: 62.80, nota: '' },
+            { id: 'l10', itemId: 'i6', qtd: 9, preco: 31.20, nota: 'Duas demãos' }
+          ] },
+          { id: 'e5', nome: 'Caixa de escadas', linhas: [
+            { id: 'l11', itemId: 'i5', qtd: 4, preco: 62.80, nota: '' }
+          ] }
+        ] }
+    ];
+    return { subgrupos, grupos, categorias, parceiros, catalogo, agenda, orcamentos };
+  }
+
+  componentDidMount() {
+    this._onResize = () => this.setState(s => {
+      const w = window.innerWidth;
+      const wasNarrow = s.width < 1024, isNarrow = w < 1024;
+      return { width: w, collapsed: (isNarrow && !wasNarrow) ? true : s.collapsed };
+    });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this._onResize);
+    if (this._recTimer) clearInterval(this._recTimer);
+  }
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState && this.state.notesKey !== prevState.notesKey) this.seedNotes();
+  }
+  seedNotes() {
+    const html = (this.state.form && this.state.form.detalhes) || '';
+    const apply = () => { if (this.notesRef.current) this.notesRef.current.innerHTML = html; };
+    apply();
+    setTimeout(apply, 0);
+    setTimeout(apply, 60);
+  }
+
+  uid(p) { return p + Math.random().toString(36).slice(2, 8); }
+  toast(kind, title, text) {
+    const id = this.uid('t');
+    const map = { ok: { fg: '#2BAA74', border: '#5DDBA2' }, err: { fg: '#B91C1C', border: '#F87171' }, info: { fg: '#1D4ED8', border: '#60A5FA' } };
+    const t = Object.assign({ id, title, text: text || '' }, map[kind] || map.info);
+    this.setState(s => ({ toasts: [...s.toasts, t] }));
+    setTimeout(() => this.setState(s => ({ toasts: s.toasts.filter(x => x.id !== id) })), 4200);
+  }
+  go(route) { this.setState({ route, search: '', quote: null, collapsed: this.state.width < 1024 ? true : this.state.collapsed }); }
+
+  // ---------- auth ----------
+  doLogin(e) {
+    e.preventDefault();
+    const { loginEmail, loginPass } = this.state;
+    if (loginPass !== 'construct' || !loginEmail.includes('@')) {
+      this.setState({ loginError: 'Email ou palavra-passe inválidos' });
+      this.toast('err', 'Email ou palavra-passe inválidos', 'As credenciais não correspondem a nenhuma conta ativa.');
+      return;
+    }
+    this.setState(s => ({ screen: 'app', loginError: '', loginPass: '', collapsed: s.width < 1024 ? true : s.collapsed }));
+    this.toast('ok', 'Sessão iniciada', 'Bem-vinda de volta, Joana.');
+  }
+  startRecovery(e) {
+    e.preventDefault();
+    this.setState({ recSent: true, recCountdown: 5 });
+    if (this._recTimer) clearInterval(this._recTimer);
+    this._recTimer = setInterval(() => {
+      const n = this.state.recCountdown - 1;
+      if (n <= 0) { clearInterval(this._recTimer); this.setState({ screen: 'login', recSent: false, recCountdown: 5, recEmail: '' }); }
+      else this.setState({ recCountdown: n });
+    }, 1000);
+  }
+  backToLogin() {
+    if (this._recTimer) clearInterval(this._recTimer);
+    this.setState({ screen: 'login', recSent: false, recCountdown: 5 });
+  }
+
+  // ---------- lookups ----------
+  byId(list, id) { return this.state[list].find(x => x.id === id) || null; }
+  grupoOfCategoria(cid) { const c = this.byId('categorias', cid); return c && c.grupoIds[0] ? this.byId('grupos', c.grupoIds[0]) : null; }
+  subOfCategoria(cid) { const g = this.grupoOfCategoria(cid); return g && g.subgrupoIds[0] ? this.byId('subgrupos', g.subgrupoIds[0]) : null; }
+  quoteTotalOf(o) { return o.ambientes.reduce((s, a) => s + a.linhas.reduce((t, l) => t + (Number(l.qtd) || 0) * (Number(l.preco) || 0), 0), 0); }
+
+  // ---------- modals ----------
+  openAgenda(ev, prefill) {
+    const base = ev ? Object.assign({}, ev) : Object.assign({ id: null, descricao: '', estado: 'Em espera', inicioData: iso(this.today), inicioHora: '09:00', fimData: '', fimHora: '', detalhes: '' }, prefill || {});
+    this.setState(s => ({ modal: 'agenda', form: base, formErr: '', notesKey: s.notesKey + 1 }), () => this.seedNotes());
+  }
+  openEntity(kind, rec) {
+    const blank = { id: null, nome: '', grupoIds: [], subgrupoIds: [] };
+    this.setState({ modal: 'entity:' + kind, form: Object.assign(blank, rec || {}), formErr: '', multiOpen: false });
+  }
+  openItem(rec) {
+    const blank = { id: null, nome: '', categoriaId: 'c1', sku: '', codigoBarras: '', ncm: '', unidade: 'un', stock: 0, stockMin: 0, precoUnit: 0, markup: 0, custoMedio: 0, fornecedorId: '', ativo: true, descricao: '', notas: '', imagem: '' };
+    const f = Object.assign(blank, rec || {});
+    const forn = f.fornecedorId ? this.byId('parceiros', f.fornecedorId) : null;
+    this.setState({ modal: 'item', form: f, formErr: '', supplierQuery: forn ? forn.nome : '', supplierOpen: false });
+  }
+  openPartner(rec) {
+    this.setState({ modal: 'partner', form: Object.assign({ id: null, nome: '', tipos: ['Cliente'], nif: '', email: '', telefone: '', localidade: '' }, rec || {}), formErr: '' });
+  }
+  openQuote(rec) {
+    const blank = { id: null, ref: 'ORC-2026-' + String(this.state.orcamentos.length + 16).padStart(3, '0'), clienteId: this.state.parceiros[0].id, obra: '', dataEmissao: iso(this.today), dataValidade: iso(addDays(this.today, 30)), estado: 'Em espera', ambientes: [{ id: this.uid('e'), nome: 'Sala', linhas: [] }] };
+    this.setState({ quote: JSON.parse(JSON.stringify(rec || blank)), route: 'orcamento-edit' });
+  }
+  closeModal() { this.setState({ modal: null, form: null, formErr: '', detail: null, multiOpen: false, supplierOpen: false }); }
+
+  setField(e) {
+    const k = e.target.dataset.field;
+    this.setState(s => ({ form: Object.assign({}, s.form, { [k]: e.target.value }) }));
+  }
+
+  saveAgenda() {
+    const f = this.state.form;
+    if (!f.descricao.trim()) { this.setState({ formErr: 'Indique uma descrição para a marcação.' }); return; }
+    if (!f.fimData || !f.fimHora) { this.setState({ formErr: 'A data e a hora de fim são obrigatórias.' }); return; }
+    if (f.fimData + f.fimHora < f.inicioData + f.inicioHora) { this.setState({ formErr: 'O fim não pode ser anterior ao início. Corrija a data ou a hora de fim.' }); return; }
+    this.setState(s => ({
+      agenda: f.id ? s.agenda.map(a => a.id === f.id ? f : a) : [...s.agenda, Object.assign({}, f, { id: this.uid('a') })],
+      modal: null, form: null, formErr: ''
+    }));
+    this.toast('ok', f.id ? 'Marcação atualizada' : 'Marcação criada', f.descricao);
+  }
+  saveEntity() {
+    const kind = this.state.modal.split(':')[1];
+    const f = this.state.form;
+    if (!f.nome.trim()) { this.setState({ formErr: 'O nome é obrigatório.' }); return; }
+    const list = kind === 'categorias' ? 'categorias' : kind === 'grupos' ? 'grupos' : 'subgrupos';
+    const rec = kind === 'categorias' ? { id: f.id, nome: f.nome, grupoIds: f.grupoIds || [] }
+      : kind === 'grupos' ? { id: f.id, nome: f.nome, subgrupoIds: f.subgrupoIds || [] }
+      : { id: f.id, nome: f.nome };
+    this.setState(s => ({
+      [list]: f.id ? s[list].map(x => x.id === f.id ? Object.assign({}, x, rec) : x) : [...s[list], Object.assign({}, rec, { id: this.uid(list[0]) })],
+      modal: null, form: null, formErr: ''
+    }));
+    this.toast('ok', f.id ? 'Registo atualizado' : 'Registo criado', f.nome);
+  }
+  saveItem() {
+    const f = this.state.form;
+    if (!f.nome.trim()) { this.setState({ formErr: 'O nome do artigo é obrigatório.' }); return; }
+    this.setState(s => ({
+      catalogo: f.id ? s.catalogo.map(x => x.id === f.id ? f : x) : [...s.catalogo, Object.assign({}, f, { id: this.uid('i') })],
+      modal: null, form: null, formErr: ''
+    }));
+    this.toast('ok', f.id ? 'Artigo atualizado' : 'Artigo criado', f.nome);
+  }
+  savePartner() {
+    const f = this.state.form;
+    if (!f.nome.trim()) { this.setState({ formErr: 'O nome do parceiro é obrigatório.' }); return; }
+    if (!f.tipos.length) { this.setState({ formErr: 'Selecione pelo menos um tipo de parceiro.' }); return; }
+    this.setState(s => ({
+      parceiros: f.id ? s.parceiros.map(x => x.id === f.id ? f : x) : [...s.parceiros, Object.assign({}, f, { id: this.uid('p') })],
+      modal: null, form: null, formErr: ''
+    }));
+    this.toast('ok', f.id ? 'Parceiro atualizado' : 'Parceiro criado', f.nome);
+  }
+  saveQuote() {
+    const q = this.state.quote;
+    this.setState(s => ({
+      orcamentos: q.id ? s.orcamentos.map(x => x.id === q.id ? q : x) : [...s.orcamentos, Object.assign({}, q, { id: this.uid('o') })],
+      quote: null, route: 'orcamentos'
+    }));
+    this.toast('ok', 'Orçamento guardado', q.ref + ' · ' + eur(this.quoteTotalOf(q) * 1.23));
+  }
+  askDelete(list, id, label) { this.setState({ confirm: { list, id, label } }); }
+  acceptDelete() {
+    const c = this.state.confirm;
+    this.setState(s => ({ [c.list]: s[c.list].filter(x => x.id !== c.id), confirm: null, modal: null, form: null, detail: null }));
+    this.toast('err', 'Registo eliminado', c.label);
+  }
+
+  // ---------- calendar builders ----------
+  eventsOn(dateStr) { return this.state.agenda.filter(a => a.inicioData === dateStr).sort((a, b) => a.inicioHora.localeCompare(b.inicioHora)); }
+  shiftCursor(dir) {
+    const c = new Date(this.state.cursor + 'T00:00:00');
+    const m = this.state.calMode;
+    if (m === 'Dia') c.setDate(c.getDate() + dir);
+    else if (m === 'Semana') c.setDate(c.getDate() + 7 * dir);
+    else if (m === 'Mês') c.setMonth(c.getMonth() + dir);
+    else c.setFullYear(c.getFullYear() + dir);
+    this.setState({ cursor: iso(c) });
+  }
+
+  buildCalendar() {
+    const mode = this.state.calMode;
+    const cur = new Date(this.state.cursor + 'T00:00:00');
+    const todayStr = iso(this.today);
+    const out = { showTimeGrid: false, showMonth: false, showYear: false, calCols: [], calRows: [], monthWeeks: [], yearMonths: [], gridCols: 1, gridMinW: '100%', rangeLabel: '' };
+
+    if (mode === 'Dia' || mode === 'Semana') {
+      const days = mode === 'Dia' ? [cur] : Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(cur), i));
+      out.showTimeGrid = true;
+      out.gridCols = days.length;
+      out.gridMinW = mode === 'Dia' ? '100%' : '860px';
+      out.calCols = days.map(d => ({ dow: DOWS[(d.getDay() + 6) % 7], day: d.getDate(), fg: iso(d) === todayStr ? '#2BAA74' : '#0D2137' }));
+      out.calRows = Array.from({ length: 13 }, (_, i) => {
+        const h = 7 + i;
+        return {
+          label: pad(h) + ':00',
+          cells: days.map(d => {
+            const ds = iso(d);
+            const evs = this.eventsOn(ds).filter(e => Number(e.inicioHora.slice(0, 2)) === h);
+            return {
+              key: ds + h,
+              bg: iso(d) === todayStr ? '#FBFDFE' : '#fff',
+              onClick: () => this.openAgenda(null, { inicioData: ds, inicioHora: pad(h) + ':00' }),
+              events: evs.map(e => ({
+                id: e.id, title: e.descricao, time: e.inicioHora + '–' + (e.fimHora || '?'),
+                bg: STATUS[e.estado].bg, fg: STATUS[e.estado].fg,
+                onClick: (ev) => { ev.stopPropagation(); this.openAgenda(e); }
+              }))
+            };
+          })
+        };
+      });
+      out.rangeLabel = mode === 'Dia'
+        ? `${cur.getDate()} de ${MONTHS[cur.getMonth()]} de ${cur.getFullYear()}`
+        : (() => { const s = startOfWeek(cur), e = addDays(s, 6); return `${s.getDate()} ${MONTHS[s.getMonth()].slice(0, 3)} – ${e.getDate()} ${MONTHS[e.getMonth()].slice(0, 3)} ${e.getFullYear()}`; })();
+    } else if (mode === 'Mês') {
+      out.showMonth = true;
+      const first = new Date(cur.getFullYear(), cur.getMonth(), 1);
+      const start = startOfWeek(first);
+      out.monthWeeks = Array.from({ length: 6 }, (_, w) => ({
+        days: Array.from({ length: 7 }, (_, i) => {
+          const d = addDays(start, w * 7 + i);
+          const ds = iso(d);
+          const evs = this.eventsOn(ds);
+          const dim = d.getMonth() !== cur.getMonth();
+          const isToday = ds === todayStr;
+          return {
+            num: d.getDate(), bg: dim ? '#FBFCFE' : '#fff',
+            fg: isToday ? '#fff' : dim ? '#94A3B8' : '#0D2137',
+            numBg: isToday ? '#3EC98E' : 'transparent',
+            more: evs.length > 3 ? `+${evs.length - 3} marcações` : '',
+            onClick: () => this.openAgenda(null, { inicioData: ds, inicioHora: '09:00' }),
+            events: evs.slice(0, 3).map(e => ({
+              title: e.descricao, time: e.inicioHora, bg: STATUS[e.estado].bg, fg: STATUS[e.estado].fg,
+              onClick: (ev) => { ev.stopPropagation(); this.openAgenda(e); }
+            }))
+          };
+        })
+      }));
+      out.rangeLabel = `${MONTHS[cur.getMonth()]} de ${cur.getFullYear()}`;
+    } else {
+      out.showYear = true;
+      const y = cur.getFullYear();
+      out.yearMonths = MONTHS.map((name, mi) => {
+        const first = new Date(y, mi, 1);
+        const start = startOfWeek(first);
+        const cells = Array.from({ length: 42 }, (_, i) => {
+          const d = addDays(start, i);
+          if (d.getMonth() !== mi) return { num: '', bg: 'transparent', fg: '#CBD5E1' };
+          const n = this.eventsOn(iso(d)).length;
+          return { num: d.getDate(), bg: n ? 'rgba(62,201,142,0.18)' : 'transparent', fg: n ? '#2BAA74' : '#475569' };
+        });
+        const count = this.state.agenda.filter(a => { const d = new Date(a.inicioData + 'T00:00:00'); return d.getFullYear() === y && d.getMonth() === mi; }).length;
+        return { name, cells, countLabel: count ? count + ' marc.' : '', onClick: () => this.setState({ calMode: 'Mês', cursor: iso(new Date(y, mi, 1)) }) };
+      });
+      out.rangeLabel = String(y);
+    }
+    out.rangeLabel = out.rangeLabel.charAt(0).toUpperCase() + out.rangeLabel.slice(1);
+    return out;
+  }
+
+  // ---------- list builders ----------
+  buildList() {
+    const q = this.state.search.trim().toLowerCase();
+    const r = this.state.route;
+    const txt = (t, opts) => Object.assign({ text: t, sub: '', badges: [], align: 'left', justify: 'flex-start', font: '400', fg: '#0D2137' }, opts || {});
+    let columns = [], rows = [];
+
+    if (r === 'categorias') {
+      columns = [{ label: 'Nome', align: 'left' }, { label: 'Grupos associados', align: 'left' }, { label: 'Artigos', align: 'right' }];
+      rows = this.state.categorias.filter(c => c.nome.toLowerCase().includes(q)).map(c => ({
+        id: c.id,
+        cells: [
+          txt(c.nome, { font: '600' }),
+          txt('', { badges: c.grupoIds.map(g => ({ text: (this.byId('grupos', g) || {}).nome || '—', bg: '#F0F4F8', fg: '#475569' })) }),
+          txt(String(this.state.catalogo.filter(i => i.categoriaId === c.id).length), { align: 'right' })
+        ],
+        onEdit: () => this.openEntity('categorias', c),
+        onView: () => this.setState({ detail: { kind: 'Categoria', title: c.nome, rec: c, back: () => this.openEntity('categorias', c), rows: [
+          { label: 'Nome', value: c.nome },
+          { label: 'Grupos associados', value: c.grupoIds.map(g => (this.byId('grupos', g) || {}).nome).join(', ') || '—' },
+          { label: 'Artigos no catálogo', value: String(this.state.catalogo.filter(i => i.categoriaId === c.id).length) }
+        ] } })
+      }));
+    } else if (r === 'grupos') {
+      columns = [{ label: 'Nome', align: 'left' }, { label: 'SubGrupos associados', align: 'left' }, { label: 'Categoria', align: 'left' }];
+      rows = this.state.grupos.filter(g => g.nome.toLowerCase().includes(q)).map(g => {
+        const cat = this.state.categorias.find(c => c.grupoIds.includes(g.id));
+        return {
+          id: g.id,
+          cells: [
+            txt(g.nome, { font: '600' }),
+            txt('', { badges: g.subgrupoIds.map(s => ({ text: (this.byId('subgrupos', s) || {}).nome || '—', bg: '#F0F4F8', fg: '#475569' })) }),
+            txt(cat ? cat.nome : '—', { fg: '#475569' })
+          ],
+          onEdit: () => this.openEntity('grupos', g),
+          onView: () => this.setState({ detail: { kind: 'Grupo', title: g.nome, back: () => this.openEntity('grupos', g), rows: [
+            { label: 'Nome', value: g.nome },
+            { label: 'Categoria', value: cat ? cat.nome : '—' },
+            { label: 'SubGrupos', value: g.subgrupoIds.map(s => (this.byId('subgrupos', s) || {}).nome).join(', ') || '—' }
+          ] } })
+        };
+      });
+    } else if (r === 'subgrupos') {
+      columns = [{ label: 'Nome', align: 'left' }, { label: 'Grupo', align: 'left' }];
+      rows = this.state.subgrupos.filter(s => s.nome.toLowerCase().includes(q)).map(s => {
+        const g = this.state.grupos.find(x => x.subgrupoIds.includes(s.id));
+        return {
+          id: s.id,
+          cells: [txt(s.nome, { font: '600' }), txt(g ? g.nome : '—', { fg: '#475569' })],
+          onEdit: () => this.openEntity('subgrupos', s),
+          onView: () => this.setState({ detail: { kind: 'SubGrupo', title: s.nome, back: () => this.openEntity('subgrupos', s), rows: [
+            { label: 'Nome', value: s.nome }, { label: 'Grupo', value: g ? g.nome : '—' }
+          ] } })
+        };
+      });
+    } else if (r === 'catalogo') {
+      columns = [{ label: 'Artigo', align: 'left' }, { label: 'Categoria', align: 'left' }, { label: 'Stock', align: 'right' }, { label: 'Preço unit.', align: 'right' }, { label: 'Estado', align: 'right' }];
+      rows = this.state.catalogo.filter(i => i.nome.toLowerCase().includes(q)).map(i => {
+        const cat = this.byId('categorias', i.categoriaId);
+        const low = Number(i.stock) < Number(i.stockMin);
+        return {
+          id: i.id,
+          cells: [
+            txt(i.nome, { font: '600', sub: i.sku + ' · ' + i.unidade }),
+            txt(cat ? cat.nome : '—', { fg: '#475569', sub: (this.grupoOfCategoria(i.categoriaId) || {}).nome || '' }),
+            txt(num(i.stock), { align: 'right', fg: low ? '#B45309' : '#0D2137', sub: low ? 'abaixo do mínimo' : 'mín. ' + num(i.stockMin) }),
+            txt(eur(i.precoUnit), { align: 'right', font: '600', sub: 'markup ' + num(i.markup) + '%' }),
+            txt('', { align: 'right', justify: 'flex-end', badges: [i.ativo ? { text: 'Ativo', bg: 'rgba(62,201,142,0.14)', fg: '#2BAA74' } : { text: 'Inativo', bg: 'rgba(148,163,184,0.20)', fg: '#475569' }] })
+          ],
+          onEdit: () => this.openItem(i),
+          onView: () => this.setState({ detail: { kind: 'Artigo do catálogo', title: i.nome, back: () => this.openItem(i), rows: [
+            { label: 'SKU', value: i.sku }, { label: 'Código de barras', value: i.codigoBarras }, { label: 'NCM', value: i.ncm },
+            { label: 'Categoria', value: cat ? cat.nome : '—' },
+            { label: 'Grupo', value: (this.grupoOfCategoria(i.categoriaId) || {}).nome || '—' },
+            { label: 'SubGrupo', value: (this.subOfCategoria(i.categoriaId) || {}).nome || '—' },
+            { label: 'Unidade', value: i.unidade },
+            { label: 'Stock atual', value: num(i.stock) }, { label: 'Stock mínimo', value: num(i.stockMin) },
+            { label: 'Preço unitário', value: eur(i.precoUnit) }, { label: 'Markup', value: num(i.markup) + '%' }, { label: 'Custo médio', value: eur(i.custoMedio) },
+            { label: 'Fornecedor preferencial', value: (this.byId('parceiros', i.fornecedorId) || {}).nome || '—' },
+            { label: 'Estado', value: i.ativo ? 'Ativo' : 'Inativo' },
+            { label: 'Descrição', value: i.descricao || '—' }, { label: 'Notas internas', value: i.notas || '—' }
+          ] } })
+        };
+      });
+    } else if (r === 'parceiros') {
+      columns = [{ label: 'Nome', align: 'left' }, { label: 'Tipo', align: 'left' }, { label: 'Contacto', align: 'left' }, { label: 'NIF', align: 'right' }];
+      rows = this.state.parceiros.filter(p => p.nome.toLowerCase().includes(q)).map(p => ({
+        id: p.id,
+        cells: [
+          txt(p.nome, { font: '600', sub: p.localidade }),
+          txt('', { badges: p.tipos.map(t => t === 'Cliente' ? { text: 'Cliente', bg: 'rgba(37,99,235,0.12)', fg: '#1D4ED8' } : { text: 'Fornecedor', bg: 'rgba(62,201,142,0.14)', fg: '#2BAA74' }) }),
+          txt(p.email, { fg: '#475569', sub: p.telefone }),
+          txt(p.nif, { align: 'right', fg: '#475569' })
+        ],
+        onEdit: () => this.openPartner(p),
+        onView: () => this.setState({ detail: { kind: 'Parceiro', title: p.nome, back: () => this.openPartner(p), rows: [
+          { label: 'Tipo', value: p.tipos.join(' e ') }, { label: 'NIF', value: p.nif }, { label: 'Email', value: p.email },
+          { label: 'Telefone', value: p.telefone }, { label: 'Localidade', value: p.localidade },
+          { label: 'Orçamentos', value: String(this.state.orcamentos.filter(o => o.clienteId === p.id).length) },
+          { label: 'Artigos fornecidos', value: String(this.state.catalogo.filter(i => i.fornecedorId === p.id).length) }
+        ] } })
+      }));
+    } else if (r === 'orcamentos') {
+      columns = [{ label: 'Referência', align: 'left' }, { label: 'Cliente', align: 'left' }, { label: 'Validade', align: 'left' }, { label: 'Estado', align: 'left' }, { label: 'Total c/ IVA', align: 'right' }];
+      rows = this.state.orcamentos.filter(o => {
+        const cli = (this.byId('parceiros', o.clienteId) || {}).nome || '';
+        return o.ref.toLowerCase().includes(q) || cli.toLowerCase().includes(q) || (o.obra || '').toLowerCase().includes(q);
+      }).map(o => {
+        const total = this.quoteTotalOf(o);
+        const st = STATUS[o.estado] || STATUS['Em espera'];
+        return {
+          id: o.id,
+          cells: [
+            txt(o.ref, { font: '600', sub: o.obra }),
+            txt((this.byId('parceiros', o.clienteId) || {}).nome || '—', { fg: '#475569' }),
+            txt(o.dataValidade.split('-').reverse().join('/'), { fg: '#475569', sub: 'emitido ' + o.dataEmissao.split('-').reverse().join('/') }),
+            txt('', { badges: [{ text: o.estado, bg: st.bg, fg: st.fg }] }),
+            txt(eur(total * 1.23), { align: 'right', font: '600', sub: eur(total) + ' s/ IVA' })
+          ],
+          onEdit: () => this.openQuote(o),
+          onView: () => this.setState({ detail: { kind: 'Orçamento', title: o.ref, back: () => this.openQuote(o), rows: [
+            { label: 'Cliente', value: (this.byId('parceiros', o.clienteId) || {}).nome || '—' },
+            { label: 'Obra', value: o.obra || '—' },
+            { label: 'Data de emissão', value: o.dataEmissao.split('-').reverse().join('/') },
+            { label: 'Data de validade', value: o.dataValidade.split('-').reverse().join('/') },
+            { label: 'Estado', value: o.estado },
+            { label: 'Ambientes', value: o.ambientes.map(a => a.nome).join(', ') },
+            { label: 'Artigos', value: String(o.ambientes.reduce((s, a) => s + a.linhas.length, 0)) },
+            { label: 'Subtotal', value: eur(total) },
+            { label: 'IVA (23%)', value: eur(total * 0.23) },
+            { label: 'Total', value: eur(total * 1.23) }
+          ] } })
+        };
+      });
+    }
+    return { columns, rows };
+  }
+
+  buildQuoteEditor() {
+    const q = this.state.quote;
+    if (!q) return {};
+    const upd = fn => { const n = JSON.parse(JSON.stringify(q)); fn(n); this.setState({ quote: n }); };
+    const ambientes = q.ambientes.map((a, ai) => ({
+      nome: a.nome,
+      subtotal: eur(a.linhas.reduce((t, l) => t + (Number(l.qtd) || 0) * (Number(l.preco) || 0), 0)),
+      onRename: e => { const v = e.target.value; upd(n => { n.ambientes[ai].nome = v; }); },
+      onRemove: () => upd(n => { n.ambientes.splice(ai, 1); }),
+      onAddLine: () => upd(n => { const it = this.state.catalogo[0]; n.ambientes[ai].linhas.push({ id: this.uid('l'), itemId: it.id, qtd: 1, preco: it.precoUnit, nota: '' }); }),
+      linhas: a.linhas.map((l, li) => {
+        const it = this.byId('catalogo', l.itemId);
+        const low = it && Number(it.stock) < Number(it.stockMin);
+        return {
+          itemId: l.itemId, qtd: l.qtd, preco: l.preco, nota: l.nota,
+          meta: it ? `${it.sku} · ${it.unidade} · stock ${num(it.stock)}${low ? ' (abaixo do mínimo)' : ''}` : '',
+          total: eur((Number(l.qtd) || 0) * (Number(l.preco) || 0)),
+          onItem: e => { const v = e.target.value; const nit = this.byId('catalogo', v); upd(n => { n.ambientes[ai].linhas[li].itemId = v; n.ambientes[ai].linhas[li].preco = nit ? nit.precoUnit : 0; }); },
+          onQtd: e => { const v = e.target.value; upd(n => { n.ambientes[ai].linhas[li].qtd = v; }); },
+          onPreco: e => { const v = e.target.value; upd(n => { n.ambientes[ai].linhas[li].preco = v; }); },
+          onNota: e => { const v = e.target.value; upd(n => { n.ambientes[ai].linhas[li].nota = v; }); },
+          onRemove: () => upd(n => { n.ambientes[ai].linhas.splice(li, 1); })
+        };
+      })
+    }));
+    const total = this.quoteTotalOf(q);
+    return {
+      quote: q, ambientes,
+      quoteItemCount: String(q.ambientes.reduce((s, a) => s + a.linhas.length, 0)),
+      quoteVat: eur(total * 0.23), quoteTotal: eur(total * 1.23),
+      onQuoteField: e => { const k = e.target.dataset.field, v = e.target.value; upd(n => { n[k] = v; }); },
+      onAddAmbiente: () => upd(n => { n.ambientes.push({ id: this.uid('e'), nome: 'Novo ambiente', linhas: [] }); }),
+      onSaveQuote: () => this.saveQuote(),
+      onCancelQuote: () => this.setState({ quote: null, route: 'orcamentos' })
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const narrow = s.width < 1024;
+    const collapsed = s.collapsed;
+    const page = PAGES[s.route] || PAGES.agenda;
+    const isQuoteEditor = s.route === 'orcamento-edit';
+    const modalKind = s.modal || '';
+    const f = s.form || {};
+
+    const base = {
+      isLogin: s.screen === 'login', isRecover: s.screen === 'recover', isApp: s.screen === 'app',
+      demoEmailShown: this.props.demoEmail || 'joana.matos@constructplus.pt',
+      loginEmail: s.loginEmail, loginPass: s.loginPass, loginError: s.loginError,
+      onLoginField: e => this.setState({ [e.target.dataset.field === 'email' ? 'loginEmail' : 'loginPass']: e.target.value, loginError: '' }),
+      onLogin: e => this.doLogin(e),
+      onGoRecover: () => this.setState({ screen: 'recover', loginError: '' }),
+      recEmail: s.recEmail, recSent: s.recSent, recIdle: !s.recSent,
+      recCountdown: s.recCountdown, recProgress: String(Math.round((s.recCountdown / 5) * 100)),
+      onRecField: e => this.setState({ recEmail: e.target.value }),
+      onRecSubmit: e => this.startRecovery(e),
+      onBackLogin: () => this.backToLogin(),
+      brandDisplay: s.width >= 900 ? 'flex' : 'none',
+      stop: e => e.stopPropagation(),
+      toasts: s.toasts
+    };
+    if (s.screen !== 'app') return base;
+
+    const cal = this.buildCalendar();
+    const list = s.route === 'agenda' || isQuoteEditor ? { columns: [], rows: [] } : this.buildList();
+
+    const navGroups = NAV.map(g => ({
+      label: g.label, showLabel: !!g.label && !collapsed,
+      items: g.items.map(it => {
+        const active = s.route === it.id || (isQuoteEditor && it.id === 'orcamentos');
+        return {
+          label: it.label, abbr: it.abbr, onClick: () => this.go(it.id),
+          bg: active ? 'rgba(62,201,142,0.14)' : 'transparent',
+          fg: active ? '#2BAA74' : '#0D2137',
+          font: active ? '600' : '500',
+          chipBg: active ? '#3EC98E' : '#F0F4F8',
+          chipFg: active ? '#08301F' : '#475569',
+          justify: collapsed ? 'center' : 'flex-start'
+        };
+      })
+    }));
+
+    const app = {
+      navGroups, collapsed,
+      asideW: collapsed ? '76px' : '244px',
+      asidePos: narrow ? 'fixed' : 'sticky',
+      asideDisplay: (narrow && collapsed) ? 'none' : 'flex',
+      showScrim: narrow && !collapsed,
+      labelDisplay: collapsed ? 'none' : 'block',
+      logoutJustify: collapsed ? 'center' : 'flex-start',
+      metaDisplay: s.width < 640 ? 'none' : 'flex',
+      mainPad: s.width < 640 ? '16px' : '32px',
+      onToggleSidebar: () => this.setState({ collapsed: !collapsed }),
+      userName: 'Joana Matos', userRole: 'Gestora de obra', userInitials: 'JM',
+      onLogout: () => { this.setState({ screen: 'login', loginPass: '', route: 'agenda' }); this.toast('info', 'Sessão terminada', 'Até breve.'); },
+      breadcrumb: page.crumb, pageTitle: isQuoteEditor ? (s.quote && s.quote.ref) || 'Orçamento' : page.title,
+      pageSubtitle: isQuoteEditor ? 'Defina ambientes e artigos. O total é recalculado a cada alteração.' : page.sub,
+      hasPrimaryAction: !isQuoteEditor,
+      primaryActionLabel: page.action,
+      onPrimaryAction: () => {
+        if (s.route === 'agenda') this.openAgenda(null);
+        else if (s.route === 'catalogo') this.openItem(null);
+        else if (s.route === 'parceiros') this.openPartner(null);
+        else if (s.route === 'orcamentos') this.openQuote(null);
+        else this.openEntity(s.route, null);
+      },
+      isAgenda: s.route === 'agenda', isList: !!page.search && !isQuoteEditor && s.route !== 'agenda', isQuoteEditor,
+      search: s.search, searchPlaceholder: page.search || '',
+      onSearch: e => this.setState({ search: e.target.value }),
+      columns: list.columns, rows: list.rows, isEmpty: list.rows.length === 0 && !!page.search,
+      resultCount: list.rows.length === 1 ? '1 registo' : list.rows.length + ' registos',
+      dows: DOWS,
+      modes: ['Dia', 'Semana', 'Mês', 'Ano'].map(m => ({
+        label: m, onClick: () => this.setState({ calMode: m }),
+        bg: s.calMode === m ? '#fff' : 'transparent',
+        fg: s.calMode === m ? '#0D2137' : '#475569',
+        font: s.calMode === m ? '600' : '500',
+        shadow: s.calMode === m ? '0 2px 8px rgba(13,33,55,0.10)' : 'none'
+      })),
+      onPrev: () => this.shiftCursor(-1), onNext: () => this.shiftCursor(1),
+      onToday: () => this.setState({ cursor: iso(this.today) }),
+      onOverlayClose: () => this.closeModal(),
+      onCloseModal: () => this.closeModal(),
+      showAgendaModal: modalKind === 'agenda',
+      showEntityModal: modalKind.startsWith('entity:'),
+      showItemModal: modalKind === 'item',
+      showPartnerModal: modalKind === 'partner',
+      showDetail: !!s.detail,
+      showConfirm: !!s.confirm,
+      confirmTitle: 'Eliminar registo',
+      confirmText: s.confirm ? `“${s.confirm.label}” será removido permanentemente do Construct+.` : '',
+      onCancelConfirm: () => this.setState({ confirm: null }),
+      onAcceptConfirm: () => this.acceptDelete(),
+      detailKind: s.detail ? s.detail.kind : '', detailTitle: s.detail ? s.detail.title : '',
+      detailRows: s.detail ? s.detail.rows : [],
+      onEditFromDetail: () => { const d = s.detail; this.setState({ detail: null }); if (d && d.back) d.back(); }
+    };
+
+    // agenda modal
+    const ag = Object.assign({}, f, {
+      descBorder: s.formErr && !(f.descricao || '').trim() ? '#F87171' : '#E2E8F0',
+      fimBorder: s.formErr && (!f.fimData || !f.fimHora) ? '#F87171' : '#E2E8F0'
+    });
+    Object.assign(app, {
+      ag, agendaError: modalKind === 'agenda' ? s.formErr : '',
+      agendaModalTitle: f.id ? 'Editar marcação' : 'Nova marcação',
+      agendaCanDelete: !!f.id,
+      statusChips: STATUS_LIST.map(st => {
+        const c = STATUS[st]; const on = f.estado === st;
+        return { label: st, onClick: () => this.setState(x => ({ form: Object.assign({}, x.form, { estado: st }) })), bg: on ? c.bg : '#fff', fg: on ? c.fg : '#475569', border: on ? c.border : '#E2E8F0' };
+      }),
+      rtButtons: [
+        { label: 'B', title: 'Negrito', font: '700', onClick: e => { e.preventDefault(); document.execCommand('bold'); this.syncNotes(); } },
+        { label: 'I', title: 'Itálico', font: '400', onClick: e => { e.preventDefault(); document.execCommand('italic'); this.syncNotes(); } },
+        { label: '• Lista', title: 'Lista com marcas', font: '500', onClick: e => { e.preventDefault(); document.execCommand('insertUnorderedList'); this.syncNotes(); } },
+        { label: '1. Lista', title: 'Lista numerada', font: '500', onClick: e => { e.preventDefault(); document.execCommand('insertOrderedList'); this.syncNotes(); } }
+      ],
+      notesRef: this.notesRef,
+      onNotesInput: e => { const v = e.currentTarget.innerHTML; this.state.form && (this.state.form.detalhes = v); },
+      onAgendaField: e => this.setField(e),
+      onSaveAgenda: () => this.saveAgenda(),
+      onAskDeleteAgenda: () => this.askDelete('agenda', f.id, f.descricao)
+    });
+
+    // entity modal
+    const kind = modalKind.startsWith('entity:') ? modalKind.split(':')[1] : '';
+    const multiSrc = kind === 'categorias' ? s.grupos : kind === 'grupos' ? s.subgrupos : [];
+    const multiKey = kind === 'categorias' ? 'grupoIds' : 'subgrupoIds';
+    const selectedIds = f[multiKey] || [];
+    Object.assign(app, {
+      ent: Object.assign({}, f, { nomeBorder: s.formErr ? '#F87171' : '#E2E8F0' }),
+      entityModalTitle: (f.id ? 'Editar ' : 'Adicionar ') + (kind === 'categorias' ? 'categoria' : kind === 'grupos' ? 'grupo' : 'subgrupo'),
+      entityNamePlaceholder: kind === 'categorias' ? 'Ex.: Acabamentos' : kind === 'grupos' ? 'Ex.: Pinturas' : 'Ex.: Tinta interior',
+      entityError: modalKind.startsWith('entity:') ? s.formErr : '',
+      entityCanDelete: !!f.id,
+      entityHasMulti: kind === 'categorias' || kind === 'grupos',
+      entityMultiLabel: kind === 'categorias' ? 'Grupos associados (opcional)' : 'SubGrupos associados (opcional)',
+      multiOpen: s.multiOpen,
+      onToggleMulti: () => this.setState({ multiOpen: !s.multiOpen }),
+      entitySelected: selectedIds.map(id => ({
+        nome: (multiSrc.find(x => x.id === id) || {}).nome || '—',
+        onRemove: () => this.setState(x => ({ form: Object.assign({}, x.form, { [multiKey]: (x.form[multiKey] || []).filter(v => v !== id) }) }))
+      })),
+      entityOptions: multiSrc.map(o => {
+        const on = selectedIds.includes(o.id);
+        return { nome: o.nome, bg: on ? 'rgba(62,201,142,0.08)' : '#fff', boxBg: on ? '#3EC98E' : '#fff', boxBorder: on ? '#3EC98E' : '#CBD5E1',
+          onClick: () => this.setState(x => { const cur = x.form[multiKey] || []; return { form: Object.assign({}, x.form, { [multiKey]: on ? cur.filter(v => v !== o.id) : [...cur, o.id] }) }; }) };
+      }),
+      onEntityField: e => this.setField(e),
+      onSaveEntity: () => this.saveEntity(),
+      onAskDeleteEntity: () => this.askDelete(kind, f.id, f.nome)
+    });
+
+    // item modal
+    const g = f.categoriaId ? this.grupoOfCategoria(f.categoriaId) : null;
+    const sub = f.categoriaId ? this.subOfCategoria(f.categoriaId) : null;
+    const sq = s.supplierQuery.trim().toLowerCase();
+    Object.assign(app, {
+      it: Object.assign({}, f, {
+        nomeBorder: s.formErr && modalKind === 'item' ? '#F87171' : '#E2E8F0',
+        grupoNome: g ? g.nome : '—', subgrupoNome: sub ? sub.nome : '—',
+        ativoLabel: f.ativo ? 'Artigo ativo' : 'Artigo inativo',
+        switchBg: f.ativo ? '#3EC98E' : '#CBD5E1',
+        switchJustify: f.ativo ? 'flex-end' : 'flex-start',
+        fornecedorNome: (this.byId('parceiros', f.fornecedorId) || {}).nome || ''
+      }),
+      itemModalTitle: f.id ? 'Editar artigo' : 'Adicionar artigo',
+      itemCanDelete: !!f.id,
+      categoriaOptions: s.categorias,
+      unidadeOptions: ['un', 'saco', 'balde', 'm', 'm²', 'm³', 'kg', 'L', 'caixa'],
+      imageLabel: f.imagem ? 'Imagem selecionada: ' + f.imagem : 'Arraste uma imagem ou clique para selecionar',
+      supplierQuery: s.supplierQuery, supplierOpen: s.supplierOpen,
+      supplierMatches: s.parceiros.filter(p => p.tipos.includes('Fornecedor') && p.nome.toLowerCase().includes(sq)).map(p => ({
+        nome: p.nome, onClick: () => this.setState(x => ({ form: Object.assign({}, x.form, { fornecedorId: p.id }), supplierQuery: p.nome, supplierOpen: false }))
+      })),
+      onSupplierQuery: e => this.setState({ supplierQuery: e.target.value, supplierOpen: true }),
+      onSupplierFocus: () => this.setState({ supplierOpen: true }),
+      onClearSupplier: () => this.setState(x => ({ form: Object.assign({}, x.form, { fornecedorId: '' }), supplierQuery: '' })),
+      onAddSupplier: () => {
+        const nome = (s.supplierQuery || '').trim() || 'Novo fornecedor';
+        const p = { id: this.uid('p'), nome, tipos: ['Fornecedor'], nif: '', email: '', telefone: '', localidade: '' };
+        this.setState(x => ({ parceiros: [...x.parceiros, p], form: Object.assign({}, x.form, { fornecedorId: p.id }), supplierQuery: nome, supplierOpen: false }));
+        this.toast('ok', 'Fornecedor criado', nome + ' foi adicionado aos parceiros.');
+      },
+      onToggleAtivo: () => this.setState(x => ({ form: Object.assign({}, x.form, { ativo: !x.form.ativo }) })),
+      onItemImage: e => { const file = e.target.files && e.target.files[0]; if (file) this.setState(x => ({ form: Object.assign({}, x.form, { imagem: file.name }) })); },
+      onItemField: e => this.setField(e),
+      onSaveItem: () => this.saveItem(),
+      onAskDeleteItem: () => this.askDelete('catalogo', f.id, f.nome)
+    });
+
+    // partner modal
+    Object.assign(app, {
+      pa: Object.assign({}, f, { nomeBorder: s.formErr && modalKind === 'partner' ? '#F87171' : '#E2E8F0' }),
+      partnerModalTitle: f.id ? 'Editar parceiro' : 'Adicionar parceiro',
+      partnerError: modalKind === 'partner' ? s.formErr : '',
+      partnerCanDelete: !!f.id,
+      partnerTypeChips: ['Cliente', 'Fornecedor'].map(t => {
+        const on = (f.tipos || []).includes(t);
+        const c = t === 'Cliente' ? { bg: 'rgba(37,99,235,0.12)', fg: '#1D4ED8', border: '#60A5FA' } : { bg: 'rgba(62,201,142,0.14)', fg: '#2BAA74', border: '#5DDBA2' };
+        return { label: t, bg: on ? c.bg : '#fff', fg: on ? c.fg : '#475569', border: on ? c.border : '#E2E8F0',
+          onClick: () => this.setState(x => { const cur = x.form.tipos || []; return { form: Object.assign({}, x.form, { tipos: cur.includes(t) ? cur.filter(v => v !== t) : [...cur, t] }) }; }) };
+      }),
+      onPartnerField: e => this.setField(e),
+      onSavePartner: () => this.savePartner(),
+      onAskDeletePartner: () => this.askDelete('parceiros', f.id, f.nome)
+    });
+
+    Object.assign(app, {
+      clientOptions: s.parceiros.filter(p => p.tipos.includes('Cliente')),
+      itemOptions: s.catalogo.filter(i => i.ativo)
+    });
+
+    return Object.assign(base, app, cal, this.buildQuoteEditor());
+  }
+
+  syncNotes() {
+    if (this.notesRef.current && this.state.form) this.state.form.detalhes = this.notesRef.current.innerHTML;
+  }
+}
+
+</script>
+</body>
+</html>

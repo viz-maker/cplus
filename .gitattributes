@@ -1,0 +1,12 @@
+# LF no repositório e na árvore de trabalho, em qualquer sistema operativo.
+# Mantém os diffs limpos entre Windows e os builds Linux da Vercel.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
