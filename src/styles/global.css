@@ -418,12 +418,17 @@ dd {
   flex: none;
 }
 
+/*
+ * Tudo o que vive no cabeçalho tem de assentar em navy, porque a barra é fixa.
+ * `text-on-brand` inverteria para tinta escura em tema escuro e desapareceria,
+ * por isso estas cores são estáveis em vez de temáticas.
+ */
 .cp-app__user {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   line-height: var(--cp-font-line-height-tight);
-  color: var(--cp-color-semantic-text-on-brand);
+  color: var(--cp-color-base-white);
 }
 
 .cp-app__user strong {
@@ -431,9 +436,20 @@ dd {
   font-weight: var(--cp-font-weight-medium);
 }
 
+/* Tom mais discreto sem `opacity`, que sobre navy sujaria o texto. */
 .cp-app__user small {
   font-size: var(--cp-font-size-xs);
-  opacity: 0.7;
+  color: var(--cp-color-base-navy-200);
+}
+
+/*
+ * O Avatar do DS usa `bg-brand` como fundo. Em tema claro isso é o mesmo navy
+ * do cabeçalho, e o círculo desaparecia. O par de acento é estável nos dois
+ * temas e destaca-se do navy.
+ */
+.cp-app__header-actions .cp-avatar {
+  background-color: var(--cp-color-semantic-bg-accent);
+  color: var(--cp-color-semantic-text-on-accent);
 }
 
 .cp-app__body {
