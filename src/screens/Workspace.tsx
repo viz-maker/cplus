@@ -36,16 +36,8 @@ export function Workspace() {
 
 function BootSplash() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'var(--cp-color-semantic-bg-brand)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Brand tone="onDark" />
+    <div className="cp-boot-splash">
+      <Brand on="brand" />
     </div>
   );
 }

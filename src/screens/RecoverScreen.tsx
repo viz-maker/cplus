@@ -29,7 +29,7 @@ export function RecoverScreen({ onBackToLogin }: { onBackToLogin: () => void }) 
   return (
     <div className="cp-centered-page">
       <Card className="cp-recover-card">
-        <Brand tone="onLight" />
+        <Brand on="surface" />
 
         {!sent ? (
           <form onSubmit={submit} className="cp-form-stack">

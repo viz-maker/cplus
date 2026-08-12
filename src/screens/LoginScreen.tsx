@@ -39,7 +39,7 @@ export function LoginScreen({ demoEmail, onSuccess, onRecover, onError }: LoginS
     <div className="cp-login">
       {showBrandPanel && (
         <aside className="cp-login__brand">
-          <Brand tone="onDark" />
+          <Brand on="brand" />
           <div className="cp-login__pitch">
             <h1>Gestão de obra, do orçamento à faturação.</h1>
             <p>
@@ -53,7 +53,7 @@ export function LoginScreen({ demoEmail, onSuccess, onRecover, onError }: LoginS
 
       <div className="cp-login__panel">
         <form onSubmit={submit} className="cp-login__form">
-          <Brand tone="onLight" />
+          <Brand on="surface" />
 
           <div>
             <h2 className="cp-heading-md">Entrar na conta</h2>

@@ -186,42 +186,29 @@ dd {
 
 /* ------------------------------------------------------------------- brand */
 
-.cp-brand {
-  display: flex;
-  align-items: center;
-  gap: var(--cp-space-3);
-  min-width: 0;
-}
-
-.cp-brand__tile {
-  flex: none;
-  border-radius: var(--cp-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cp-brand__pip {
-  border-radius: var(--cp-radius-sm);
-  background: var(--cp-color-semantic-bg-accent);
-}
-
-.cp-brand__word {
-  font-weight: var(--cp-font-weight-bold);
-  letter-spacing: var(--cp-font-letter-spacing-tight);
-  white-space: nowrap;
-}
-
 /*
- * In dark mode `bg-brand` resolves to mint, so an accent-coloured "+" would
- * vanish against the brand panel. There it simply matches the wordmark.
+ * Cores do logótipo oficial. Não são tokens de propósito: a identidade da marca
+ * não muda com o tema — é a superfície por baixo que tem de ser a certa.
  */
-.cp-brand__plus {
-  color: var(--cp-color-semantic-bg-accent);
+/* As dimensões vêm dos atributos width/height do componente — ver Brand.tsx. */
+.cp-brand {
+  display: block;
+  flex: none;
 }
 
-[data-theme='dark'] .cp-brand--on-dark .cp-brand__plus {
-  color: inherit;
+/* Painel de marca: sempre navy, logo sempre a variante creme. */
+.cp-brand--on-brand {
+  color: #cbca9a;
+}
+
+/* Superfície temática: a variante acompanha o tema, senão o wordmark
+   desaparece contra o fundo num dos dois. */
+.cp-brand--on-surface {
+  color: #072235;
+}
+
+[data-theme='dark'] .cp-brand--on-surface {
+  color: #cbca9a;
 }
 
 /* ------------------------------------------------------------------- modal */
@@ -274,10 +261,24 @@ dd {
 
 /* ------------------------------------------------------------------- login */
 
+/*
+ * O painel de marca fica navy nos dois temas. `bg-brand` inverte para menta em
+ * tema escuro, e o logótipo escuro tem o "C" e o "+" em menta — desapareceriam.
+ * Uma superfície de marca com lockup tem de ser estável, por isso usa o token
+ * base em vez do semântico.
+ */
 .cp-login {
   min-height: 100vh;
   display: flex;
-  background: var(--cp-color-semantic-bg-brand);
+  background: var(--cp-color-base-navy-700);
+}
+
+.cp-boot-splash {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cp-color-base-navy-700);
 }
 
 .cp-login__brand {
@@ -296,25 +297,25 @@ dd {
   gap: var(--cp-space-5);
 }
 
+/* O painel é sempre navy, por isso o texto é sempre claro — `text-on-brand`
+   inverteria para tinta escura em tema escuro e ficaria ilegível. */
 .cp-login__pitch h1 {
   font-size: var(--cp-font-size-4xl);
   line-height: var(--cp-font-line-height-tight);
   font-weight: var(--cp-font-weight-bold);
   letter-spacing: var(--cp-font-letter-spacing-tight);
-  color: var(--cp-color-semantic-text-on-brand);
+  color: var(--cp-color-base-white);
 }
 
 .cp-login__pitch p {
   font-size: var(--cp-font-size-md);
   line-height: var(--cp-font-line-height-normal);
-  color: var(--cp-color-semantic-text-on-brand);
-  opacity: 0.75;
+  color: var(--cp-color-base-navy-200);
 }
 
 .cp-login__legal {
   font-size: var(--cp-font-size-xs);
-  color: var(--cp-color-semantic-text-on-brand);
-  opacity: 0.6;
+  color: var(--cp-color-base-navy-400);
 }
 
 .cp-login__panel {

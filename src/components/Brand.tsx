@@ -1,43 +1,72 @@
+/**
+ * Logótipo oficial Construct+.
+ *
+ * Fonte: `CONSTRUCT-PLUS-1.svg` (fundos claros) e `CONSTRUCT-PLUS-3.svg`
+ * (fundos escuros). Os dois ficheiros têm geometria idêntica e diferem apenas
+ * no preenchimento do wordmark, por isso aqui há uma só cópia dos traçados: o
+ * wordmark usa `currentColor` e a cor certa vem do CSS.
+ *
+ * O "C" e o "+" mantêm o verde de marca fixo (#49bc95) nos dois temas — é
+ * identidade visual, não uma cor temática, e por isso não usa tokens.
+ */
+
+const BRAND_GREEN = '#49bc95';
+
+const VIEWBOX_WIDTH = 649.1;
+const VIEWBOX_HEIGHT = 158.7;
+
 interface BrandProps {
-  /** `onDark` puts a solid accent tile next to inverse type; `onLight` inverts it. */
-  tone: 'onDark' | 'onLight';
-  tile?: number;
-  fontSize?: number;
+  /**
+   * Qual a superfície por baixo:
+   * - `brand` — o painel navy fixo (entrada e splash). Wordmark sempre creme.
+   * - `surface` — fundo temático (cartões, formulários). Navy em tema claro,
+   *   creme em tema escuro; senão desaparecia num dos dois.
+   */
+  on: 'brand' | 'surface';
+  /** Altura em píxeis. A largura acompanha a proporção do original. */
+  height?: number;
 }
 
-export function Brand({ tone, tile = 34, fontSize = 20 }: BrandProps) {
-  const onDark = tone === 'onDark';
+export function Brand({ on, height = 40 }: BrandProps) {
+  const className = on === 'brand' ? 'cp-brand cp-brand--on-brand' : 'cp-brand cp-brand--on-surface';
+
+  // Um <svg> inline sem atributo `width` estica para 100% do contentor, e o
+  // `aspect-ratio` do CSS não vence esse dimensionamento. Daí os dois atributos.
+  const width = Math.round(height * (VIEWBOX_WIDTH / VIEWBOX_HEIGHT));
+
   return (
-    <div className={onDark ? 'cp-brand cp-brand--on-dark' : 'cp-brand cp-brand--on-light'}>
-      <div
-        aria-hidden
-        className="cp-brand__tile"
-        style={{
-          width: tile,
-          height: tile,
-          background: onDark
-            ? 'var(--cp-color-semantic-bg-accent)'
-            : 'var(--cp-color-semantic-bg-brand)',
-        }}
-      >
-        {!onDark && (
-          <div
-            className="cp-brand__pip"
-            style={{ width: Math.round(tile * 0.35), height: Math.round(tile * 0.35) }}
-          />
-        )}
-      </div>
-      <span
-        className="cp-brand__word"
-        style={{
-          fontSize,
-          color: onDark
-            ? 'var(--cp-color-semantic-text-on-brand)'
-            : 'var(--cp-color-semantic-text-primary)',
-        }}
-      >
-        Construct<span className="cp-brand__plus">+</span>
-      </span>
-    </div>
+    <svg
+      className={className}
+      width={width}
+      height={height}
+      viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+      xmlns="http://www.w3.org/2000/svg"
+      role="img"
+      aria-label="Construct+"
+    >
+      {/* "C" — sempre verde de marca */}
+      <path
+        fill={BRAND_GREEN}
+        d="M41.3,57c3.3-6.5,7.8-11.6,13.6-15.2,5.7-3.6,12.2-5.4,19.3-5.4s15.7,2.4,21.9,7.2c6.3,4.8,10.7,11.4,13.2,19.9h-17.2c-1.7-4-4.1-7-7.2-9-3.1-2-6.7-3-10.8-3s-8.2,1.1-11.6,3.4c-3.4,2.3-6,5.5-7.9,9.6-1.9,4.2-2.8,9-2.8,14.6s.9,10.4,2.8,14.5c1.9,4.2,4.5,7.4,7.9,9.7,3.4,2.3,7.3,3.4,11.6,3.4s7.7-1,10.8-3.1c3.1-2,5.5-5,7.2-9h17.2c-2.5,8.5-6.9,15.2-13.1,19.9-6.2,4.8-13.6,7.1-22,7.1s-13.6-1.8-19.3-5.4c-5.7-3.6-10.3-8.7-13.6-15.1-3.3-6.5-5-13.8-5-22s1.7-15.6,5-22.1Z"
+      />
+
+      {/* "onstruct" — cor definida pelo CSS conforme o fundo */}
+      <g fill="currentColor">
+        <path d="M130.4,118.2c-4.5-2.6-8-6.3-10.5-11.1-2.6-4.8-3.8-10.3-3.8-16.5s1.3-11.7,3.9-16.5c2.6-4.8,6.2-8.5,10.8-11.1,4.5-2.6,9.6-3.9,15.2-3.9s10.7,1.3,15.2,3.9c4.5,2.6,8.1,6.3,10.8,11.1,2.6,4.8,3.9,10.3,3.9,16.5s-1.3,11.7-4,16.5c-2.7,4.8-6.3,8.5-10.9,11.1-4.6,2.6-9.7,3.9-15.4,3.9s-10.6-1.3-15.1-3.9ZM153,106.6c2.3-1.4,4.2-3.4,5.6-6.1,1.4-2.7,2.1-6,2.1-9.9,0-5.8-1.5-10.2-4.4-13.4-2.9-3.1-6.5-4.7-10.7-4.7s-7.7,1.6-10.5,4.7c-2.8,3.1-4.3,7.6-4.3,13.4s1.4,10.3,4.1,13.4c2.8,3.1,6.2,4.7,10.4,4.7s5.2-.7,7.5-2Z" />
+        <path d="M232.6,66.2c4.1,4.6,6.2,11,6.2,19.1v35.6h-14.2v-33.6c0-4.8-1.1-8.5-3.3-11.1-2.2-2.6-5.3-3.9-9.1-3.9s-7,1.3-9.3,3.9c-2.3,2.6-3.4,6.3-3.4,11.1v33.6h-14.2v-60.8h14.2v7.6c1.9-2.6,4.3-4.7,7.3-6.2,2.9-1.5,6.2-2.2,9.7-2.2,6.7,0,12.1,2.3,16.2,6.9Z" />
+        <path d="M258.4,119.4c-4-1.8-7.2-4.2-9.6-7.3-2.4-3.1-3.6-6.5-3.9-10.2h15.8c.3,2.3,1.5,4.3,3.5,5.8,2.1,1.5,4.6,2.3,7.7,2.3s5.3-.6,7-1.8c1.7-1.2,2.5-2.7,2.5-4.5s-1-3.5-3.1-4.5c-2.1-1-5.3-2.1-9.8-3.2-4.6-1.1-8.4-2.2-11.4-3.4-3-1.2-5.5-3-7.6-5.4-2.1-2.4-3.2-5.7-3.2-9.8s1-6.5,3-9.2c2-2.8,4.8-5,8.5-6.6,3.7-1.6,8-2.4,13.1-2.4,7.4,0,13.3,1.8,17.7,5.4,4.4,3.6,6.8,8.5,7.3,14.7h-15c-.2-2.4-1.3-4.3-3.1-5.8-1.8-1.4-4.3-2.1-7.3-2.1s-5,.5-6.6,1.5c-1.5,1-2.3,2.5-2.3,4.3s1,3.6,3.1,4.7c2.1,1.1,5.3,2.1,9.7,3.2,4.5,1.1,8.2,2.2,11.1,3.4,2.9,1.2,5.4,3,7.6,5.4,2.1,2.5,3.2,5.7,3.3,9.7,0,3.5-1,6.7-3,9.5-2,2.8-4.8,5-8.5,6.5-3.7,1.6-8,2.4-12.9,2.4s-9.6-.9-13.7-2.7Z" />
+        <path d="M324.3,73.2v29.6c0,2.1.5,3.6,1.4,4.5,1,.9,2.6,1.4,4.9,1.4h7v13h-9.4c-12.6,0-18.9-6.3-18.9-19v-29.5h-10.1v-12.7h10.1v-15.1h15.1v15.1h13.3v12.7h-13.3Z" />
+        <path d="M539.9,73.2v29.6c0,2.1.5,3.6,1.4,4.5,1,.9,2.6,1.4,4.9,1.4h7v13h-9.4c-12.6,0-18.9-6.3-18.9-19v-29.5h-10.1v-12.7h10.1v-15.1h15.1v15.1h13.3v12.7h-13.3Z" />
+        <path d="M368.9,61.8c4.1-2.3,11.6-1.5,15.5-1.5v13.5h-3.9c-4.6,0-11.1-1.1-15.6,5.9-1.7,2.7-3.5,6.2-3.5,11.8v30.1h-14.7v-60.5h14.7v9.4c1.6-4.5,4.3-7.1,7.5-8.8Z" />
+        <path d="M444.8,61v60.3h-14.7v-7.6c-1.9,2.6-4.3,4.7-7.3,6.1-3,1.5-6.3,2.2-9.8,2.2s-8.5-1-11.9-3c-3.5-2-6.2-4.9-8.2-8.8-2-3.9-3-8.5-3-13.9v-35.4h14.5v33.2c0,4.8,1.1,8.5,3.4,11,2.3,2.6,5.4,3.9,9.4,3.9s7.2-1.3,9.5-3.9c2.3-2.6,3.4-6.3,3.4-11v-33.2h14.7Z" />
+        <path d="M456.9,74.1c2.5-4.8,6-8.5,10.5-11.1,4.5-2.6,9.6-3.9,15.3-3.9s13.5,1.9,18.4,5.7c4.9,3.8,8.1,9.1,9.8,16h-16.3c-.9-2.7-2.3-4.7-4.4-6.3-2.1-1.5-4.6-2.3-7.6-2.3-4.3,0-7.7,1.6-10.3,4.8-2.5,3.2-3.8,7.8-3.8,13.7s1.3,10.4,3.8,13.6c2.5,3.2,5.9,4.8,10.3,4.8,6.1,0,10.1-2.8,12-8.4h16.3c-1.7,6.6-4.9,11.9-9.8,15.8-4.9,3.9-11,5.9-18.3,5.9s-10.9-1.3-15.3-3.9c-4.5-2.6-8-6.3-10.5-11.1-2.5-4.8-3.8-10.3-3.8-16.7s1.3-11.9,3.8-16.7Z" />
+      </g>
+
+      {/* "+" — sempre verde de marca */}
+      <path
+        fill={BRAND_GREEN}
+        d="M611.8,60.5h-10.2c-.5,0-1-.4-1-1v-10.2c0-.5-.4-1-1-1h-10.8c-.5,0-1,.4-1,1v10.2c0,.5-.4,1-1,1h-10.2c-.5,0-1,.4-1,1v10.8c0,.5.4,1,1,1h10.2c.5,0,1,.4,1,1v10.2c0,.5.4,1,1,1h10.8c.5,0,1-.4,1-1v-10.2c0-.5.4-1,1-1h10.2c.5,0,1-.4,1-1v-10.8c0-.5-.4-1-1-1Z"
+      />
+    </svg>
   );
 }
