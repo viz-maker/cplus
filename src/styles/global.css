@@ -398,6 +398,26 @@ dd {
   gap: var(--cp-space-3);
 }
 
+/*
+ * O botão `ghost` do DS fixa `color: text-primary`, que em tema claro é navy —
+ * invisível contra o cabeçalho navy. Como a barra é uma superfície de marca
+ * estável, os botões que vivem nela são sempre claros.
+ */
+.cp-app__header-actions .cp-button {
+  color: var(--cp-color-base-white);
+}
+
+.cp-app__header-actions .cp-button:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.cp-icon-button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  flex: none;
+}
+
 .cp-app__user {
   display: flex;
   flex-direction: column;

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { Avatar, Button, Header, SideNav } from '@constructpluseu/react';
+import { MoonIcon, SunIcon } from '../components/icons';
 import { NAV } from '../domain/navigation';
 import { COMPACT_BREAKPOINT, NARROW_BREAKPOINT, useViewportWidth } from '../hooks/useViewport';
 import { useTheme } from '../hooks/useTheme';
@@ -107,13 +108,16 @@ export function AppShell({
       */}
       <Header brand="Construct+" navOpen={navOpen} onMenuToggle={() => setNavOpen((o) => !o)}>
         <div className="cp-app__header-actions">
+          {/* Mostra o destino, não o estado atual: lua acende o escuro, sol o claro. */}
           <Button
             variant="ghost"
             size="sm"
+            className="cp-icon-button"
             onClick={toggle}
-            aria-label={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}
+            title={theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'}
+            aria-label={theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'}
           >
-            {theme === 'dark' ? 'Claro' : 'Escuro'}
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
           </Button>
           {!compact && (
             <span className="cp-app__user">
