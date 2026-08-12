@@ -101,6 +101,10 @@ export function AppShell({
 
   return (
     <div className="cp-app">
+      {/*
+        `brand` só aceita string, por isso o texto fica como nome acessível e o
+        logótipo entra por CSS — ver `.cp-header__brand` em global.css.
+      */}
       <Header brand="Construct+" navOpen={navOpen} onMenuToggle={() => setNavOpen((o) => !o)}>
         <div className="cp-app__header-actions">
           <Button
@@ -118,9 +122,6 @@ export function AppShell({
             </span>
           )}
           <Avatar name={user.name} size="sm" />
-          <Button variant="ghost" size="sm" onClick={onLogout}>
-            Terminar sessão
-          </Button>
         </div>
       </Header>
 
@@ -135,6 +136,16 @@ export function AppShell({
             onExpandedChange={setExpandedIds}
             open={navOpen}
           />
+
+          {/* O SideNav não tem slot de rodapé, por isso o logout é irmão dele,
+              empurrado para o fundo da coluna. */}
+          {navOpen && (
+            <div className="cp-app__nav-footer">
+              <Button variant="ghost" className="cp-logout" fullWidth onClick={onLogout}>
+                Terminar sessão
+              </Button>
+            </div>
+          )}
         </div>
 
         <main className="cp-app__main">

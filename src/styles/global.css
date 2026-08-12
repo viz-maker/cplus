@@ -367,6 +367,31 @@ dd {
   background: var(--cp-color-semantic-bg-canvas);
 }
 
+/*
+ * O cabeçalho do design system usa `bg-brand`, que inverte para menta em tema
+ * escuro. As duas variantes do logótipo têm o "C" e o "+" em menta, portanto
+ * nenhuma funcionaria sobre esse fundo. Uma barra que carrega o lockup tem de
+ * ser uma superfície de marca estável — mesma decisão que no painel de entrada.
+ *
+ * Isto sobrepõe-se ao estilo de um componente do DS. Vale a pena pedir à equipa
+ * do design system uma variante de cabeçalho com fundo fixo.
+ */
+.cp-header {
+  background-color: var(--cp-color-base-navy-700) !important;
+  color: var(--cp-color-base-white) !important;
+}
+
+/*
+ * `brand` só aceita string. O texto passa a ser apenas o nome acessível do
+ * link e o logótipo entra como imagem de fundo.
+ */
+.cp-header__brand {
+  width: 139px;
+  height: 34px;
+  font-size: 0;
+  background: url('/brand/construct-plus-on-dark.svg') left center / contain no-repeat;
+}
+
 .cp-app__header-actions {
   display: flex;
   align-items: center;
@@ -395,6 +420,46 @@ dd {
   display: flex;
   align-items: flex-start;
   position: relative;
+}
+
+/*
+ * Coluna de navegação de altura total: o SideNav ocupa o espaço disponível e
+ * rola sozinho, deixando o logout encostado ao fundo. O DS não tem slot de
+ * rodapé no SideNav, daí a coluna ser nossa.
+ */
+.cp-app__nav {
+  position: sticky;
+  top: 3rem; /* altura do cabeçalho do design system */
+  flex: none;
+  align-self: stretch;
+  height: calc(100vh - 3rem);
+  display: flex;
+  flex-direction: column;
+}
+
+.cp-app__nav > .cp-side-nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* a borda passa para a coluna, para ficar contínua por trás do rodapé */
+  border-right: none;
+}
+
+.cp-app__nav-footer {
+  flex: none;
+  width: 16rem; /* mesma largura do SideNav */
+  padding: var(--cp-space-3);
+  border-top: 1px solid var(--cp-color-semantic-border-default);
+  background: var(--cp-color-semantic-bg-surface);
+}
+
+.cp-app__nav:has(.cp-side-nav:not(.cp-side-nav--closed)) {
+  border-right: 1px solid var(--cp-color-semantic-border-default);
+}
+
+.cp-logout {
+  justify-content: flex-start;
+  color: var(--cp-color-semantic-text-danger);
 }
 
 .cp-app__main {
